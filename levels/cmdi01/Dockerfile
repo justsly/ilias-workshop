@@ -20,4 +20,4 @@ ADD geheim.txt /var/www/html/geheim.txt
 RUN apt-get clean
 
 # Start Apache Server on Container startup
-RUN echo "/usr/sbin/apache2ctl start >> /etc/bash.bashrc
+RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc

@@ -34,7 +34,7 @@ if(isset($_GET['ip'])) $ip = $_GET['ip'];
 	    <p>
 	    <?php
 		if(isset($ip)){
-			else system("ping -c 3 ".$ip);
+			system("ping -c 3 ".$ip);
 		} 
 		?></p>
 	    <p>
