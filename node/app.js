@@ -1,7 +1,5 @@
 //Workshop Module to keep functions safe
-var WorkshopModule
-	;
-WorkshopModule = (function () {
+var WorkshopModule = (function () {
 
 	//Define child process to handle the Docker environment
 	var exec = require('child_process').exec;
