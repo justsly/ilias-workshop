@@ -17,7 +17,6 @@ ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD index.php /var/www/html/index.php
 ADD secret.php /var/www/html/secret.php
-RUN mv /var/www/html/secret.php /var/www/html/secret_$(date|md5sum|cut -c 1-32).php
 
 # Clean up
 RUN rm /var/www/html/index.html
@@ -25,4 +24,5 @@ RUN apt-get clean
 
 # Start Apache Server on Container startup
 RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc
+RUN echo "mv /var/www/html/secret.php /var/www/html/secret_$(date|md5sum|cut -c 1-32).php" >> /etc/bash.bashrc
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf

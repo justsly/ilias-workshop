@@ -1,4 +1,5 @@
 <?php
+//Unsecure by design
 if(isset($_GET['ip'])) $ip = $_GET['ip'];
 ?>
 <!DOCTYPE html>
@@ -6,8 +7,8 @@ if(isset($_GET['ip'])) $ip = $_GET['ip'];
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Command Injection 1">
+    <meta name="author" content="BB">
     <link href="/css/style.css" rel="stylesheet">
     <title>Command Injection</title>
   </head>
