@@ -83,17 +83,6 @@ var WorkshopModule = (function () {
 			exec(cmd);
 			WorkshopModule.removeContainerByHash(docker_hash);
 		},
-		getPortFromHash: function (docker_hash) {
-			return exec('docker port ' + docker_hash, function (error, stdout, stderr) {
-				if (!error) {
-					var docker_port = stdout.match(/\:\d+/)[0];
-					WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port));
-					return docker_port;
-				} else {
-					return false;
-				}
-			});
-		},
 		checkExistingContainer: function (req, res) {
 			if (req.cookies) var docker_hash = req.cookies['dockerHash'];
 			var docker_port = WorkshopModule.findContainerByHash(docker_hash);
@@ -124,7 +113,7 @@ const srv_ip = '192.168.56.101';
 const srv_port = 8080;
 
 //Register Server on Port
-var server = app.listen(srv_ip, srv_port, function(){
+app.listen(srv_ip, srv_port, function(){
 	console.log('Server running at http://'+srv_ip+':'+srv_port);
 });
 
@@ -139,7 +128,6 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 app.use(function(req, res, next){
-	console.log('request incoming');
 	var exists = WorkshopModule.checkExistingContainer(req, res);
 	if(!exists) next();
 });
@@ -147,7 +135,6 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	//var sid = req.cookie['uid'];
 	console.log(req.cookie);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
