@@ -17,7 +17,7 @@ ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD index.php /var/www/html/index.php
 ADD secret.php /var/www/html/secret.php
-RUN mv /var/www/html/secret.php /var/www/html/_$(date | md5sum).php
+RUN mv /var/www/html/secret.php /var/www/html/secret_$(date|md5sum|cut -c 1-32).php
 
 # Clean up
 RUN rm /var/www/html/index.html
