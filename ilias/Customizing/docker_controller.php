@@ -48,13 +48,13 @@ if (count($ref_query) != 2) {
 $params = keyValStrToKeyValArray($ref_query[1], '&', '=');
 
 // check for ref_id
-if (!array_key_exists('ref_id', $params) || strlen($params['ref_id'] == 0) {
+if (!array_key_exists('ref_id', $params) || strlen($params['ref_id']) == 0) {
     echo 'Invalid Request. Missing paramter ref_id. Please navigate from ILIAS';
     die;
 }
 
 // check for object_id
-if (!array_key_exists('obj_id', $params) || strlen($params['obj_id'] == 0) {
+if (!array_key_exists('obj_id', $params) || strlen($params['obj_id']) == 0) {
     echo 'Invalid Request. Missing paramter obj_id. Please navigate from ILIAS';
     die;
 }
@@ -101,13 +101,14 @@ if ($_GET['action'] == 'go') {
 
     // redirect user to docker page
     // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
+    // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
     $protocol = 'http://';
     $domain = '192.168.56.101';
     $port = '8080';
     $node = '/container/create/';
     $level = 'cmdi0' . $level . '/';
 
-    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . 'ref_id/' . $ref_id . '/page_id/' . $obj_id;
+    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . 'ref_id/' . $ref_id . '/page_id/' . $obj_id;
     setcookie('uid', $sid, 0, '/');
     header("Location: " . $location);
     die('If your browser does not redirect. Navigate to: ' . $location);
