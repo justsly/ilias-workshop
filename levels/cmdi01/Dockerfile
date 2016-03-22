@@ -10,11 +10,13 @@ RUN apt-get update -y && \
 ENV DEBIAN_FRONTEND noninteractive
 
 # Install packages
-RUN apt-get install -y php5
+RUN apt-get install -y apache2 php5
 
 # Add Level Files to Container
-ADD cmdi01/index.php /var/www/html/index.php
-ADD cmdi01/geheim.txt /var/www/html/geheim.txt
+RUN mkdir /var/www/html/css
+ADD ../css/style.css /var/www/html/css
+ADD index.php /var/www/html/index.php
+ADD geheim.txt /var/www/html/geheim.txt
 
 # Clean up
 RUN apt-get clean
