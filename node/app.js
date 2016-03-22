@@ -52,7 +52,7 @@ var WorkshopModule = (function () {
 		},
 		//Create DockerContainer and redirect User to this Instance
 		createDockerContainer: function (lvalue, ref_id, page_id, res) {
-			var cmd = 'docker run -it --rm -p 0:80 sclyther/' + lvalue;
+			var cmd = 'docker run -dit -p 0:80 sclyther/' + lvalue;
 			exec(cmd, function (error, stdout, stderr) {
 				if (!error) {
 					docker_hash = stdout.match(/[0-9a-f]+/)[0];
@@ -79,7 +79,7 @@ var WorkshopModule = (function () {
 			});
 		},
 		destroyContainer: function (docker_hash) {
-			var cmd = 'docker stop ' + docker_hash;
+			var cmd = 'docker stop ' + docker_hash + '&& docker rm ' + docker_hash;
 			exec(cmd);
 			WorkshopModule.removeContainerByHash(docker_hash);
 		},
@@ -113,7 +113,7 @@ const srv_ip = '192.168.56.101';
 const srv_port = 8080;
 
 //Register Server on Port
-app.listen(srv_ip, srv_port, function(){
+app.listen(srv_port, srv_ip, function(){
 	console.log('Server running at http://'+srv_ip+':'+srv_port);
 });
 
@@ -135,7 +135,7 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	console.log(req.cookie);
+	console.log(req.cookies);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 	}

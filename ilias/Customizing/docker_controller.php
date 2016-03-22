@@ -90,9 +90,10 @@ if ($_GET['action'] == 'go') {
         die;
     }
 
-    $level = (int)$_GET['level'];
+    $level = $_GET['level'];
 
-    if ($level < 1) {
+    //@todo catch injection
+    if (strlen($level) == 0) {
         echo 'Invalid Request. Argument "level" has a wrong value';
         die;
     }
@@ -106,10 +107,9 @@ if ($_GET['action'] == 'go') {
     $domain = '192.168.56.101';
     $port = '8080';
     $node = '/container/create/';
-    $level = 'cmdi0' . $level . '/';
 
-    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . 'ref_id/' . $ref_id . '/page_id/' . $obj_id;
-    setcookie('uid', $sid, 0, '/');
+    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id;
+    setcookie("uid", $sid, time()+60*60, '/', $domain);
     header("Location: " . $location);
     die('If your browser does not redirect. Navigate to: ' . $location);
 
