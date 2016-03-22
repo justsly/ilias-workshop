@@ -16,7 +16,8 @@ RUN mkdir /var/www/html/jquery
 ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD index.php /var/www/html/index.php
-ADD geheim.txt /var/www/html/geheim.txt
+ADD secret.php /var/www/html/secret.php
+RUN mv /var/www/html/secret.php /var/www/html/_$(date | md5sum).php
 
 # Clean up
 RUN rm /var/www/html/index.html
