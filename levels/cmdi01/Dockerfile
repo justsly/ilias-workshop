@@ -25,3 +25,4 @@ RUN apt-get clean
 
 # Start Apache Server on Container startup
 RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
