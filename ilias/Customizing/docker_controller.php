@@ -26,6 +26,14 @@ function keyValStrToKeyValArray($str, $keyDelimiter, $valueDelimiter) {
     return $result;
 }
 
+function checkLevelExists($lvl) {
+    //POST Level to REST-API and get return or false
+    //if false die else go to redirect
+
+    //@todo fix funtion. until fix always true
+    return true;
+}
+
 // make sure we have an action
 if (!isset($_GET['action'])) {
   echo 'Invalid Request.';
@@ -94,14 +102,17 @@ if ($_GET['action'] == 'go') {
 
     //@todo catch injection
     if (strlen($level) == 0) {
-        echo 'Invalid Request. Argument "level" has a wrong value';
+        echo 'Invalid Request. Argument "level" has a wrong value.';
+        die;
+    }
+
+    if(!checkLevelExists($level)) {
+        echo 'Invalid Request. Level does not exist.';
         die;
     }
 
 
-
     // redirect user to docker page
-    // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
     // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
     $protocol = 'http://';
     $domain = '192.168.56.101';
@@ -111,28 +122,9 @@ if ($_GET['action'] == 'go') {
     $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id;
     setcookie("uid", $sid, time()+60*60, '/', $domain);
     header("Location: " . $location);
+    echo "Processing, please wait...";
     die('If your browser does not redirect. Navigate to: ' . $location);
 
 
-
-
 }
-
-
-
-
-
-
-
-
-
-//GET Level_ID
-/*
-$level_id = $_GET['level'];
-
-$cookie_val = $_COOKIE['PHPSESSID'];
-
-echo "Level: ".$level_id."\n";
-echo "Cookie: ".$cookie_val;
-*/
 ?>

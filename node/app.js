@@ -98,11 +98,43 @@ var WorkshopModule = (function () {
 				'Location': 'http://' + srv_ip + '' + docker_port
 			});
 			res.end();
-		}
+		},
+        //@todo fix this with correct soap call
+        checkValidSid : function (sid) {
+            console.log("checkValidSid called with sid: " + sid);
+            var ccheck = "bde38411f3da9c033442648684049123";
+            var cookie_test = "iltest=cookie;ilClientId=ilias;PHPSESSID=" + sid;
+            var regex = /[0-9a-f]{32}/;
+            var options = {
+                host: 'ilias.slycurity.de',
+                port: '443',
+                path: '/data/ilias/lm_data/lm_265/check/check.txt',
+                method: 'GET',
+                headers: {'Cookie': cookie_test}
+            };
+            callback = function(res) {
+                var str = '';
+                res.on('data', function (chunk) {
+                    str += chunk;
+                });
+
+                res.on('end', function () {
+                    var result = str.match(regex);
+                    if(result && (result[0] == ccheck)){
+                        console.log("gut");
+                    } else {
+                        console.log("nicht gut");
+                    }
+                });
+            };
+            var req = https.request(options, callback);
+            req.end();
+        }
 	}
 })();
 
 //Define some Framework Stuff
+const https = require('https');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -135,7 +167,7 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	console.log(req.cookies);
+	WorkshopModule.checkValidSid(req.cookies['uid']);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 	}
@@ -156,6 +188,18 @@ app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.destroyContainer(req.params.docker_hash);
 	res.status(200).send({success:true});
 	res.end();
+});
+
+//Check if Level Exists
+app.post('/level/exists/', function(req, res){
+	if(req.body && req.body.level_id){
+		var exists = WorkshopModule.getLevelById(req.body.level_id);
+		if(!exists){
+			res.status(404).send({success:false, error:"Level does not exist!"});
+		} else {
+			res.status(200).send({success:true});
+		}
+	}
 });
 
 //Default Catch for wrong URLs sends 404
