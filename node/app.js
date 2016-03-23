@@ -131,8 +131,6 @@ var WorkshopModule = (function () {
             };
             var req = https.request(options, callback);
             req.end();
-            console.log("req value: " +req);
-            return req;
         }
 	}
 })();
