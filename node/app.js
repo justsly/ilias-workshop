@@ -101,41 +101,23 @@ var WorkshopModule = (function () {
 		},
         //@todo fix this with correct soap call
         checkValidSid : function (sid) {
-            var isvalid = false;
-            console.log("checkValidSid called with sid: " + sid);
-            var ccheck = "bde38411f3da9c033442648684049123";
-            var cookie_test = "iltest=cookie;ilClientId=ilias;PHPSESSID=" + sid;
-            var regex = /[0-9a-f]{32}/;
-            var options = {
-                host: 'ilias.slycurity.de',
-                port: '443',
-                path: '/data/ilias/lm_data/lm_265/check/check.txt',
-                method: 'GET',
-                headers: {'Cookie': cookie_test}
-            };
-            callback = function(res) {
-                var str = '';
-                res.on('data', function (chunk) {
-                    str += chunk;
-                });
-
-                res.on('end', function () {
-                    var result = str.match(regex);
-                    if(result && (result[0] == ccheck)){
-                        console.log("gut");
-                        isvalid = true;
-                    }
-                });
-            };
-            var req = https.request(options, callback);
-            req.end();
-            if(req) return isvalid;
+			var url = 'https://ilias.slycurity.de/webservice/soap/server.php?wsdl';
+			var args = {sid: sid + '::ilias'};
+			soap.createClient(url, function(err, client) {
+				client.getUserIdBySid(args, function(err, result) {
+					if(result.usr_id){
+						console.log('in function: ' + result);
+						return true;
+					}
+					return false;
+				});
+			});
         }
 	}
 })();
 
 //Define some Framework Stuff
-const https = require('https');
+const soap = require('soap');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -169,7 +151,7 @@ app.use(function(req, res, next){
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
 	var isvalid = WorkshopModule.checkValidSid(req.params.uid);
-    console.log("isvalid status: " + isvalid);
+    console.log("outside function: " + isvalid);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 	}
