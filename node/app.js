@@ -100,19 +100,19 @@ var WorkshopModule = (function () {
 			res.end();
 		},
         //@todo fix this with correct soap call
-        checkValidSid : function (uid) {
+        checkValidSid : function (uid, cb) {
 			var url = 'https://ilias.slycurity.de/webservice/soap/server.php?wsdl';
 			var args = {sid: uid + '::ilias'};
 			soap.createClient(url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
 					if(result.usr_id){
-						console.log('in function: ' + result.usr_id);
-						return true;
+						console.log(result);
+						return (cb ? cb(true) : true);
 					} else {
-						return false;
+						return (cb ? cb(false) : false);
 					}
 				});
-			});
+			}).bind(this);
         }
 	}
 })();
@@ -151,11 +151,16 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	var isvalid = WorkshopModule.checkValidSid(req.params.uid);
-    console.log("outside function: " + isvalid);
-	if(level){
-		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
-	}
+	WorkshopModule.checkValidSid(req.params.uid, function(isvalid) {
+		console.log("outside function: " + isvalid);
+		if(level && isvalid) {
+			WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
+		} else {
+			console.log('denying docker creation because of missing sid / level');
+			return res.status(401).send({success: false, error: 'invalid request. missing sid / level'});
+		}
+	});
+
 });
 
 // Return to ILIAS with complete flag
