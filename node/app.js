@@ -100,16 +100,17 @@ var WorkshopModule = (function () {
 			res.end();
 		},
         //@todo fix this with correct soap call
-        checkValidSid : function (sid) {
+        checkValidSid : function (uid) {
 			var url = 'https://ilias.slycurity.de/webservice/soap/server.php?wsdl';
-			var args = {sid: sid + '::ilias'};
+			var args = {sid: uid + '::ilias'};
 			soap.createClient(url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
 					if(result.usr_id){
-						console.log('in function: ' + result);
+						console.log('in function: ' + result.usr_id);
 						return true;
+					} else {
+						return false;
 					}
-					return false;
 				});
 			});
         }
