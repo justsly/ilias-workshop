@@ -112,7 +112,7 @@ var WorkshopModule = (function () {
 						return (cb ? cb(false) : false);
 					}
 				});
-			}).bind(this);
+			}.bind(this));
         }
 	}
 })();
