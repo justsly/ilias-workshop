@@ -122,13 +122,17 @@ var WorkshopModule = (function () {
                     var result = str.match(regex);
                     if(result && (result[0] == ccheck)){
                         console.log("gut");
+                        return true;
                     } else {
                         console.log("nicht gut");
+                        return false;
                     }
                 });
             };
             var req = https.request(options, callback);
             req.end();
+            console.log("req value: " +req);
+            return req;
         }
 	}
 })();
@@ -167,7 +171,8 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	WorkshopModule.checkValidSid(req.params.uid);
+	var isvalid = WorkshopModule.checkValidSid(req.params.uid);
+    console.log("isvalid status: " + isvalid);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 	}
