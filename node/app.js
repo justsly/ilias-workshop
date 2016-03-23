@@ -106,10 +106,9 @@ var WorkshopModule = (function () {
 			soap.createClient(url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
 					if(result.usr_id){
-						console.log(result);
-						return (cb ? cb(true) : true);
+						return ((typeof(cb) === 'function') ? cb(null, true) : true);
 					} else {
-						return (cb ? cb(false) : false);
+						return ((typeof(cb) === 'function') ? cb(null, false) : false);
 					}
 				});
 			}.bind(this));
@@ -122,6 +121,16 @@ const soap = require('soap');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+
+const inDebug = true;
+
+// destroy console.log in live mode
+if (!inDebug) {
+	console = console || {};
+	console.log = function(){};
+}
+
+
 app.use(cookieParser());
 
 // Define Server IP and Port
@@ -151,13 +160,11 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-	WorkshopModule.checkValidSid(req.params.uid, function(isvalid) {
-		console.log("outside function: " + isvalid);
+	WorkshopModule.checkValidSid(req.params.uid, function(err, isvalid) {
 		if(level && isvalid) {
 			WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 		} else {
-			console.log('denying docker creation because of missing sid / level');
-			return res.status(401).send({success: false, error: 'invalid request. missing sid / level'});
+			return res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		}
 	});
 
@@ -178,20 +185,6 @@ app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.destroyContainer(req.params.docker_hash);
 	res.status(200).send({success:true});
 	res.end();
-});
-
-//Check if Level Exists
-app.get('/level/:level_id/exists/', function(req, res){
-	if(req.params.level_id){
-		var exists = WorkshopModule.getLevelById(req.params.level_id);
-		if(!exists){
-			res.status(404).send({success:false, error:"Level does not exist!"});
-            res.end();
-		} else {
-			res.status(200).send({success:true});
-            res.end();
-		}
-	}
 });
 
 //Default Catch for wrong URLs sends 404
