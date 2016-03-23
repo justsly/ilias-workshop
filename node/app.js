@@ -165,10 +165,9 @@ app.use(function(req, res, next){
 });
 
 //Define Routing for the Websecurity Levels
-app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id', function(req, res){
+app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
-    console.log(req.headers);
-	WorkshopModule.checkValidSid(req.cookies['uid']);
+	WorkshopModule.checkValidSid(req.params.uid);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
 	}

@@ -26,14 +26,6 @@ function keyValStrToKeyValArray($str, $keyDelimiter, $valueDelimiter) {
     return $result;
 }
 
-function checkLevelExists($lvl) {
-    //POST Level to REST-API and get return or false
-    //if false die else go to redirect
-
-    //@todo fix funtion. until fix always true
-    return true;
-}
-
 // make sure we have an action
 if (!isset($_GET['action'])) {
   echo 'Invalid Request.';
@@ -106,11 +98,6 @@ if ($_GET['action'] == 'go') {
         die;
     }
 
-    if(!checkLevelExists($level)) {
-        echo 'Invalid Request. Level does not exist.';
-        die;
-    }
-
 
     // redirect user to docker page
     // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
@@ -119,11 +106,10 @@ if ($_GET['action'] == 'go') {
     $port = '8080';
     $node = '/container/create/';
 
-    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id;
+    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id . '/uid/' . $sid;
     header("Location: " . $location);
-    echo "Processing, please wait...";
+    die('If your browser does not redirect. Navigate to: ' . $location);
     exit();
-    //die('If your browser does not redirect. Navigate to: ' . $location);
 
 
 }
