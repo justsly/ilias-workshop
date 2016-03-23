@@ -101,6 +101,7 @@ var WorkshopModule = (function () {
 		},
         //@todo fix this with correct soap call
         checkValidSid : function (sid) {
+            var isvalid = false;
             console.log("checkValidSid called with sid: " + sid);
             var ccheck = "bde38411f3da9c033442648684049123";
             var cookie_test = "iltest=cookie;ilClientId=ilias;PHPSESSID=" + sid;
@@ -122,15 +123,13 @@ var WorkshopModule = (function () {
                     var result = str.match(regex);
                     if(result && (result[0] == ccheck)){
                         console.log("gut");
-                        return true;
-                    } else {
-                        console.log("nicht gut");
-                        return false;
+                        isvalid = true;
                     }
                 });
             };
             var req = https.request(options, callback);
             req.end();
+            return isvalid;
         }
 	}
 })();
