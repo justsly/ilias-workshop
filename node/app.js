@@ -167,6 +167,7 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
+    console.log(req.headers);
 	WorkshopModule.checkValidSid(req.cookies['uid']);
 	if(level){
 		WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
@@ -191,13 +192,15 @@ app.delete('/container/:docker_hash/end', function(req, res){
 });
 
 //Check if Level Exists
-app.post('/level/exists/', function(req, res){
-	if(req.body && req.body.level_id){
-		var exists = WorkshopModule.getLevelById(req.body.level_id);
+app.get('/level/:level_id/exists/', function(req, res){
+	if(req.params.level_id){
+		var exists = WorkshopModule.getLevelById(req.params.level_id);
 		if(!exists){
 			res.status(404).send({success:false, error:"Level does not exist!"});
+            res.end();
 		} else {
 			res.status(200).send({success:true});
+            res.end();
 		}
 	}
 });

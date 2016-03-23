@@ -120,10 +120,10 @@ if ($_GET['action'] == 'go') {
     $node = '/container/create/';
 
     $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id;
-    setcookie("uid", $sid, time()+60*60, '/', $domain);
     header("Location: " . $location);
     echo "Processing, please wait...";
-    die('If your browser does not redirect. Navigate to: ' . $location);
+    exit();
+    //die('If your browser does not redirect. Navigate to: ' . $location);
 
 
 }
