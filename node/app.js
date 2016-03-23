@@ -129,7 +129,7 @@ var WorkshopModule = (function () {
             };
             var req = https.request(options, callback);
             req.end();
-            return isvalid;
+            if(req) return isvalid;
         }
 	}
 })();
