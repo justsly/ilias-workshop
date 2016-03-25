@@ -18,9 +18,8 @@
 <script>
 	$("#button0").click(function(){
 	$.ajax({
-		url: 'https://ilias.slycurity.de/ilias.php?ref_id=' + getCookie('ref_id') + '&page_id=' + getCookie('page_id') + '&cmd=processAnswer&cmdClass=illmpagegui&cmdNode=jp:jo&baseClass=ilLMPresentationGUI&cmdMode=asynch',
-		type: 'POST',
-		data: '{"tries":1,"wrong":0,"passed":true,"answer":[true],"interactionId":null,"choice":["56e3c74c89ef6c909f80c40e065d7269"],"isBestSolution":true}',
+		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/complete/',
+		type: 'GET',
 		success: function(result) {
 			console.log(result);
 		}	
@@ -28,7 +27,7 @@
 	});
 	$("#button1").click(function(){
 	$.ajax({
-    		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') +'/end/',
+    		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
     		type: 'DELETE',
     		success: function(result) {
 			window.close();
