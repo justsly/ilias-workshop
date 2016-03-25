@@ -101,7 +101,7 @@ var WorkshopModule = (function () {
 		},
         //@todo fix this with correct soap call
         checkValidSid : function (uid, cb) {
-			var url = 'https://ilias.slycurity.de/webservice/soap/server.php?wsdl';
+			var url = 'http://localhost/webservice/soap/server.php?wsdl';
 			var args = {sid: uid + '::ilias'};
 			soap.createClient(url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
