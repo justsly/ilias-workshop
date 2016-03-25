@@ -160,7 +160,9 @@ app.use(function(req, res, next){
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
+	console.log("level exists: " + level);
 	WorkshopModule.checkValidSid(req.params.uid, function(err, isvalid) {
+		console.log("valid uid: " + isvalid);
 		if(level && isvalid) {
 			WorkshopModule.createDockerContainer(level, req.params.active_id, res);
 		} else {
