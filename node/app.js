@@ -25,7 +25,7 @@ var WorkshopModule = (function () {
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
 		//Define object DockerContainer
-		DockerContainer: function (docker_h, docker_p, active_id) {
+		DockerContainer: function (docker_h, docker_p, active_id, uid, lid) {
 			this.docker_hash = docker_h;
 			this.docker_port = docker_p;
 			this.active_id = active_id;
