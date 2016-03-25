@@ -51,7 +51,7 @@ var WorkshopModule = (function () {
 			return null;
 		},
 		//Create DockerContainer and redirect User to this Instance
-		createDockerContainer: function (lvalue, ref_id, page_id, res) {
+		createDockerContainer: function (lvalue, active_id, res) {
 			var cmd = 'docker run -dit -p 0:80 sclyther/' + lvalue;
 			exec(cmd, function (error, stdout, stderr) {
 				if (!error) {
@@ -63,7 +63,7 @@ var WorkshopModule = (function () {
 							setTimeout(function () {
 								res.writeHead(302, {
 									'Location': 'http://' + srv_ip + '' + docker_port,
-									'Set-Cookie': ['dockerHash=' + docker_hash + '; Path=/;', 'ref_id=' + ref_id + '; Path=/;', 'page_id=' + page_id + ';Path=/']
+									'Set-Cookie': ['dockerHash=' + docker_hash + '; Path=/;', 'active_id=' + active_id + '; Path=/;']
 								});
 								res.end();
 								setTimeout(function () {
@@ -158,11 +158,11 @@ app.use(function(req, res, next){
 });
 
 //Define Routing for the Websecurity Levels
-app.get('/container/create/:level_id/ref_id/:ref_id/page_id/:page_id/uid/:uid', function(req, res){
+app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
 	var level = WorkshopModule.getLevelById(req.params.level_id);
 	WorkshopModule.checkValidSid(req.params.uid, function(err, isvalid) {
 		if(level && isvalid) {
-			WorkshopModule.createDockerContainer(level, req.params.ref_id, req.params.page_id, res);
+			WorkshopModule.createDockerContainer(level, req.params.active_id, res);
 		} else {
 			return res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		}

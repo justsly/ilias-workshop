@@ -47,21 +47,14 @@ if (count($ref_query) != 2) {
 
 $params = keyValStrToKeyValArray($ref_query[1], '&', '=');
 
-// check for ref_id
-if (!array_key_exists('ref_id', $params) || strlen($params['ref_id']) == 0) {
+// check for active_id
+if (!array_key_exists('active_id', $params) || strlen($params['ref_id']) == 0) {
     echo 'Invalid Request. Missing paramter ref_id. Please navigate from ILIAS';
     die;
 }
 
-// check for object_id
-if (!array_key_exists('obj_id', $params) || strlen($params['obj_id']) == 0) {
-    echo 'Invalid Request. Missing paramter obj_id. Please navigate from ILIAS';
-    die;
-}
 
-
-$ref_id = max(0, (int)$params['ref_id']);
-$obj_id = max(0, (int)$params['obj_id']);
+$active_id = max(0, (int)$params['active_id']);
 
 
 // make sure cookies are enabled and availabe
@@ -106,7 +99,7 @@ if ($_GET['action'] == 'go') {
     $port = '8080';
     $node = '/container/create/';
 
-    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/ref_id/' . $ref_id . '/page_id/' . $obj_id . '/uid/' . $sid;
+    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
     header("Location: " . $location);
     die('If your browser does not redirect. Navigate to: ' . $location);
     exit();
