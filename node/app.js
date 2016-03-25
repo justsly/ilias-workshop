@@ -8,6 +8,7 @@ var WorkshopModule = (function () {
 
 	return {
 		Level: function (lkey, lvalue, qid, answer) {
+			this.lkey = lkey;
 			this.lvalue = lvalue;
 			this.qid = qid;
 			this.answer = answer;
@@ -82,7 +83,7 @@ var WorkshopModule = (function () {
 						}
 					});
 				} else {
-					console.log('docker creation error', error);
+					console.log('docker creation error');
 					res.status(500).send({success: false, error: 'docker creation failed'});
 				}
 			});
