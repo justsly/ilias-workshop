@@ -57,7 +57,7 @@ var WorkshopModule = (function () {
 		//Create DockerContainer and redirect User to this Instance
 		createDockerContainer: function (lid, active_id, uid, res) {
 			WorkshopModule.getLevelById(lid, function(err, litem) {
-				if(level) {
+				if(litem) {
 					console.log('level exists: ' + litem.lvalue);
 					var cmd = 'docker run -dit -p 0:80 sclyther/' + litem.lvalue;
 					exec(cmd, function (error, stdout) {
