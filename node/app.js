@@ -80,6 +80,9 @@ var WorkshopModule = (function () {
 									}, 3000);
 								}
 							});
+						} else {
+							console.log('error:' + error);
+							res.status(500).send({success: false, error: error});
 						}
 					});
 				} else {
@@ -113,7 +116,7 @@ var WorkshopModule = (function () {
         //SOAP Call to check if uid is valid in ILIAS
         checkValidSid : function (uid, cb) {
 			var args = {sid: uid + '::ilias'};
-			soap.createClient(wsdl_url, function(err, client) {
+			soap.createClient(config.wsdl_url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
 					if(result.usr_id){
 						return ((typeof(cb) === 'function') ? cb(null, true) : true);
@@ -127,7 +130,7 @@ var WorkshopModule = (function () {
 			console.log("try to send answer: " + answer);
 			var sol = "<values><value>" + answer + "</value><value></value><points>5</points></values>";
 			var args = {sid: uid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
-			soap.createClient(wsdl_url, function(err, client) {
+			soap.createClient(config.wsdl_url, function(err, client) {
 				client.saveQuestionSolution(args, function(err, result) {
 					if(result.html) {
 						console.log(result);
@@ -146,12 +149,11 @@ var WorkshopModule = (function () {
 const soap = require('soap');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const config = require('./config');
 const app = express();
 
-const inDebug = true;
-
 // destroy console.log in live mode
-if (!inDebug) {
+if (!config.inDebug) {
 	console = console || {};
 	console.log = function(){};
 }
@@ -159,16 +161,9 @@ if (!inDebug) {
 
 app.use(cookieParser());
 
-//WSDL URL
-const wsdl_url = "http://localhost/webservice/soap/server.php?wsdl";
-
-// Define Server IP and Port
-const srv_ip = '192.168.56.101';
-const srv_port = 8080;
-
 //Register Server on Port
-app.listen(srv_port, srv_ip, function(){
-	console.log('Server running at http://'+srv_ip+':'+srv_port);
+app.listen(config.srv_port, config.srv_ip, function(){
+	console.log('Server running at http://'+config.srv_ip+':'+config.srv_port);
 });
 
 //Set CORS Definition here
@@ -241,5 +236,5 @@ app.get('*', function(req, res){
 //Define Levels
 WorkshopModule.addNewLevel(new WorkshopModule.Level('base', 'bb_ws_base_image', 1, 'base1'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('cmdi01', 'bb_ws_cmdi_01', 1, 'cmdi1'));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, 'test456'));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '2e78cabf229b96c729960d05b7bac509'));
 
