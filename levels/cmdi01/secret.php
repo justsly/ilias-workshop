@@ -10,29 +10,25 @@
     <title>This is so secret</title>
 </head>
 <body>
-<p class="text-success">Sehr gut! Du hast die geheime Datei gefunden. Das Geheimnis lautet: <b>56e3c74c89ef6c909f80c40e065d7269</b></p>
-<button class="btn" id="button0">L&ouml;sung einreichen</button>
+<p class="text-success">Sehr gut! Du hast die geheime Datei gefunden.</p>
 
-<button class="btn" id="button1">Container beenden</button>
+<button class="btn" id="complete_level">Aufgabe einreichen!</button>
 
 <script>
-	$("#button0").click(function(){
+	$("#complete_level").click(function(){
 	$.ajax({
 		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/complete/',
 		type: 'GET',
 		success: function(result) {
 			console.log(result);
+			$.ajax({
+                		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
+                		type: 'DELETE',
+                		success: function(result) {
+            			    window.close();
+                		}
+            	});
 		}	
-	});
-	});
-	$("#button1").click(function(){
-	$.ajax({
-    		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
-    		type: 'DELETE',
-    		success: function(result) {
-			window.close();
-    		}
-	});
 	});
 	function getCookie(cname) {
     		var name = cname + "=";
