@@ -11,4 +11,9 @@ config.srv_port = 8080;
 //Switch Debug mode on or off
 config.inDebug = true;
 
+//ILIAS SOAP User
+config.client = 'ilias';
+config.username = 'soap';
+config.password = 'W44titsPRanWbN';
+
 module.exports = config;
