@@ -130,7 +130,7 @@ var WorkshopModule = (function () {
 			soap.createClient(wsdl_url, function(err, client) {
 				client.saveQuestionSolution(args, function(err, result) {
 					if(result.html) {
-						console.log("answer ok");
+						console.log(result);
 						return ((typeof(cb) === 'function') ? cb(null, true) : true);
 					} else {
 						console.log("answer not ok");
