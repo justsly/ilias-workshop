@@ -24,7 +24,7 @@ ADD sqli01/setup.sh /root/setup.sh
 ADD sqli01/sqli01.sql /root/sqli01.sql
 RUN chmod u+x /root/setup.sh
 RUN /etc/init.d/mysql start
-RUN "create database sqli" | mysql
+RUN echo "create database sqli" | mysql
 RUN mysql sqli < /root/sqli01.sql
 
 # Clean up
