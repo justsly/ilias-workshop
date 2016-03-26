@@ -129,7 +129,7 @@ var WorkshopModule = (function () {
 			var args = {sid: uid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
 			soap.createClient(wsdl_url, function(err, client) {
 				client.saveQuestionSolution(args, function(err, result) {
-					if(result.statusCode == 200) {
+					if(result.html) {
 						console.log("answer ok");
 						return ((typeof(cb) === 'function') ? cb(null, true) : true);
 					} else {
