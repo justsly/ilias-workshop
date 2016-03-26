@@ -204,7 +204,7 @@ app.get('/container/:docker_hash/complete', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if(citem){
 			WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-				WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, citem.qid, function(err, result) {
+				WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, function(err, result) {
 					if(result) {
 						res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
 					} else {
