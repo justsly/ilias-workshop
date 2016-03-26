@@ -103,7 +103,7 @@ UNLOCK TABLES;
 -- Create SQL User and Grant Access to Table
 --
 
-CREATE USER 'sqli_workshop'@'localhost' IDENIFIED BY '20Workshop!$';
+CREATE USER 'sqli_workshop'@'localhost' IDENTIFIED BY '20Workshop!$';
 GRANT ALL PRIVILEGES ON sqli.* TO 'sqli_workshop'@'localhost';
 
 -- Dump completed on 2016-03-25 12:23:17
