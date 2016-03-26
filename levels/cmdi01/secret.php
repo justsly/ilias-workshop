@@ -16,19 +16,20 @@
 
 <script>
 	$("#complete_level").click(function(){
-	$.ajax({
-		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/complete/',
-		type: 'GET',
-		success: function(result) {
-			console.log(result);
-			$.ajax({
-                		url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
-                		type: 'DELETE',
-                		success: function(result) {
-            			    window.close();
-                		}
+	    $.ajax({
+		    url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/complete/',
+		    type: 'GET',
+		    success: function(result) {
+			    console.log(result);
+			    $.ajax({
+                	url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
+                	type: 'DELETE',
+                	success: function(result) {
+            		    window.close();
+                	}
             	});
-		}	
+		    }
+	    });
 	});
 	function getCookie(cname) {
     		var name = cname + "=";
