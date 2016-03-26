@@ -1,3 +1,11 @@
+<?php
+include_once('./config.php');
+
+echo "<script>";
+echo "var srv_ip=".$srv_ip;
+echo "var srv_port=".$srv_port;
+echo "</script>";
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,12 +25,12 @@
 <script>
 	$("#complete_level").click(function(){
 	    $.ajax({
-		    url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/complete/',
+		    url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/',
 		    type: 'GET',
 		    success: function(result) {
 			    console.log(result);
 			    $.ajax({
-                	url: 'http://192.168.56.101:8080/container/' + getCookie('dockerHash') + '/end/',
+                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
                 	type: 'DELETE',
                 	success: function(result) {
             		    window.close();
