@@ -124,13 +124,16 @@ var WorkshopModule = (function () {
 			}.bind(this));
         },
 		sendSolutionToILIAS : function (answer, uid, aid, qid, cb) {
+			console.log("try to send answer...");
 			var sol = "<values><value>" + answer + "</value><value></value><points>5</points></values>";
 			var args = {sid: uid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
 			soap.createClient(wsdl_url, function(err, client) {
 				client.saveQuestionSolution(args, function(err, result) {
 					if(result.statusCode == 200) {
+						console.log("answer ok");
 						return ((typeof(cb) === 'function') ? cb(null, true) : true);
 					} else {
+						console.log("answer not ok");
 						return ((typeof(cb) === 'function') ? cb(null, false) : false);
 					}
 				})
@@ -212,7 +215,6 @@ app.get('/container/:docker_hash/complete', function(req, res){
 		} else {
 			res.status(404).send({success:false, error: 'container not found!'});
 		}
-		res.end();
 	});
 });
 
