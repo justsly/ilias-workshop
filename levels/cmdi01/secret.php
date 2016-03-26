@@ -1,5 +1,5 @@
 <?php
-include_once('./config.php');
+include './config.php';
 
 echo "<script>";
 echo "var srv_ip=".$srv_ip;
