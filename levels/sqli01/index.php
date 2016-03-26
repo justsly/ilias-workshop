@@ -46,7 +46,7 @@ if($result = $db->query($sql)){
     </div>
     <div class="container">
     	<h3>SQLI Level 1</h3>
-		<?
+		<?php
 		 if(isset($password) && $password != "" && isset($user) && $user != ""){
 		 	if(isset($debug) && isset($sql)){
 				 echo "<p class='text-info'>DEBUG: ".$sql."</p>";
@@ -90,7 +90,7 @@ if($result = $db->query($sql)){
 	    <input type="password" name="password"/>
 	    <button type="submit" class="btn" value="clicked">login</button>
 	    </div></div>
-	<?                                                                 
+	<?php
         if(isset($debug) && $debug==1){
             echo "<div class='control-group'>                              
             <label class='control-label' for='checkbox'>Debug</label>      
