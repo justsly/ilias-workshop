@@ -70,7 +70,7 @@ var WorkshopModule = (function () {
 									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid));
 									setTimeout(function () {
 										res.writeHead(302, {
-											'Location': 'http://' + srv_ip + '' + docker_port,
+											'Location': 'http://' + config.srv_ip + '' + docker_port,
 											'Set-Cookie': ['dockerHash=' + docker_hash + '; Path=/;']
 										});
 										res.end();
@@ -109,7 +109,7 @@ var WorkshopModule = (function () {
 		},
 		redirectToPort: function (docker_port, res) {
 			res.writeHead(302, {
-				'Location': 'http://' + srv_ip + '' + docker_port
+				'Location': 'http://' + config.srv_ip + '' + docker_port
 			});
 			res.end();
 		},
