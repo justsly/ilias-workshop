@@ -7,11 +7,12 @@ var WorkshopModule = (function () {
 	var level_list = [];
 
 	return {
-		Level: function (lkey, lvalue, qid, answer) {
+		Level: function (lkey, lvalue, qid, answer, points) {
 			this.lkey = lkey;
 			this.lvalue = lvalue;
 			this.qid = qid;
 			this.answer = answer;
+			this.points = points;
 		},
 		addNewLevel : function (litem){
 			level_list.push(litem);
@@ -126,17 +127,17 @@ var WorkshopModule = (function () {
 				});
 			}.bind(this));
         },
-		sendSolutionToILIAS : function (answer, uid, aid, qid, cb) {
+		sendSolutionToILIAS : function (answer, uid, aid, qid, points, cb) {
 			console.log("try to send answer: " + answer);
-			var sol = "<values><value>" + answer + "</value><value></value><points>5</points></values>";
+			var sol = "<values><value>" + answer + "</value><value></value><points>" + points + "</points></values>";
 			var args = {sid: uid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
 			soap.createClient(config.wsdl_url, function(err, client) {
 				client.saveQuestionSolution(args, function(err, result) {
 					if(result.html) {
-						console.log(result);
+						console.log("answer send ok");
 						return ((typeof(cb) === 'function') ? cb(null, true) : true);
 					} else {
-						console.log("answer not ok");
+						console.log("answer send not ok");
 						return ((typeof(cb) === 'function') ? cb(null, false) : false);
 					}
 				})
@@ -158,7 +159,7 @@ if (!config.inDebug) {
 	console.log = function(){};
 }
 
-
+//Middleware to parse Cookies
 app.use(cookieParser());
 
 //Register Server on Port
@@ -176,6 +177,7 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+//Middleware to check if user has already an existing container. If not proceed else redirect to exiting container.
 app.use(function(req, res, next){
 	WorkshopModule.checkExistingContainer(req, res, function(err, exists) {
 		if(!exists) next();
@@ -199,7 +201,7 @@ app.get('/container/:docker_hash/complete', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if(citem){
 			WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-				WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, function(err, result) {
+				WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
 					if(result) {
 						res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
 					} else {
@@ -234,7 +236,8 @@ app.get('*', function(req, res){
 
 
 //Define Levels
-WorkshopModule.addNewLevel(new WorkshopModule.Level('base', 'bb_ws_base_image', 1, 'base1'));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('cmdi01', 'bb_ws_cmdi_01', 1, 'cmdi1'));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '2e78cabf229b96c729960d05b7bac509'));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '2e78cabf229b96c729960d05b7bac509', 5));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01', 2, 'sqli_pass', 5));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02', 2, 'sqli_pass', 10));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('blind_sqli', 'ilias_sqli03', 2, 'sqli_pass', 15));
 

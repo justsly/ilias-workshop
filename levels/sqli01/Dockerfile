@@ -8,18 +8,22 @@ MAINTAINER BB
 RUN apt-get update -y && apt-get upgrade -y
 
 # Install packages
-RUN apt-get install -y apache2 php5
+RUN apt-get install -y apache2 php5 mysql-server
 
 # Add Level Files to Container
 RUN mkdir /var/www/html/css
 RUN mkdir /var/www/html/jquery
 ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
-ADD cmdi01/index.php /var/www/html/index.php
-ADD cmdi01/secret.php /var/www/html/secret.php
+ADD sqli01/index.php /var/www/html/index.php
+ADD sqli01/dbconnect.php /var/www/html/dbconnect.php
+ADD sqli01/sql_statement.txt /var/www/html/sql_statement.txt
+ADD sqlii01/admin_infos.php /var/www/html/admin_infos.php
 ADD config.php /var/www/html/config.php
-ADD cmdi01/setup.sh /root/setup.sh
+ADD sqli01/setup.sh /root/setup.sh
+ADD sqli01/sqli01.sql /root/sqli01.sql
 RUN chmod u+x /root/setup.sh
+RUN mysql < /root/sqli01.sql
 
 # Clean up
 RUN rm /var/www/html/index.html
@@ -27,5 +31,6 @@ RUN apt-get clean
 
 # Start Apache Server on Container startup
 RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc
+RUN echo "service mysql start" >> /etc/bash.bashrc
 RUN echo "/root/setup.sh" >> /etc/bash.bashrc
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
