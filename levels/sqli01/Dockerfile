@@ -23,6 +23,7 @@ ADD config.php /var/www/html/config.php
 ADD sqli01/setup.sh /root/setup.sh
 ADD sqli01/sqli01.sql /root/sqli01.sql
 RUN chmod u+x /root/setup.sh
+RUN /etc/init.d/mysql start
 RUN mysql < /root/sqli01.sql
 
 # Clean up
@@ -31,6 +32,6 @@ RUN apt-get clean
 
 # Start Apache Server on Container startup
 RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc
-RUN echo "service mysql start" >> /etc/bash.bashrc
+RUN echo "/etc/init.d/mysql start" >> /etc/bash.bashrc
 RUN echo "/root/setup.sh" >> /etc/bash.bashrc
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
