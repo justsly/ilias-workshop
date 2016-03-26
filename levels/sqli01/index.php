@@ -77,7 +77,7 @@ if($result = $db->query($sql)){
 		 		echo "<p class='text-info'>Logge dich als 'admin' ein!</p>";
 			}
 		 }
-		 ?>
+		?>
 	    <form class="well form-horizontal" method="post">
 	    <div class="control-group">
 	    <label class="control-label" for="user">User</label>
@@ -104,7 +104,7 @@ if($result = $db->query($sql)){
             <div class='controls'>                                         
             <input type='checkbox' name='debug'/>";                        
         }
-        ?>
+    ?>
   	    </div></div>
 	    </form>
 	    <p>
