@@ -124,7 +124,7 @@ var WorkshopModule = (function () {
 			}.bind(this));
         },
 		sendSolutionToILIAS : function (answer, uid, aid, qid, cb) {
-			console.log("try to send answer...");
+			console.log("try to send answer: " + answer);
 			var sol = "<values><value>" + answer + "</value><value></value><points>5</points></values>";
 			var args = {sid: uid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
 			soap.createClient(wsdl_url, function(err, client) {
