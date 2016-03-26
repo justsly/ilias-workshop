@@ -1,9 +1,9 @@
 <?php
-include './config.php';
+include('./config.php');
 
 echo "<script>";
-echo "var srv_ip=".$srv_ip;
-echo "var srv_port=".$srv_port;
+echo "var srv_ip=".$srv_ip.";";
+echo "var srv_port=".$srv_port.";";
 echo "</script>";
 ?>
 <!DOCTYPE html>
