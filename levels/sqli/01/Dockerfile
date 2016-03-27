@@ -20,7 +20,7 @@ ADD sqli/dbconnect.php /var/www/html/dbconnect.php
 ADD sqli/01/sql_statement.txt /var/www/html/sql_statement.txt
 ADD sqli/admin_infos.php /var/www/html/admin_infos.php
 ADD config.php /var/www/html/config.php
-ADD sqli/setup.sh /root/setup.sh
+ADD sqli/01/setup.sh /root/setup.sh
 ADD secret_generator.sh /root/secret_generator.sh
 ADD sqli/01/sqli01.sql /root/sqli01.sql
 RUN chmod u+x /root/setup.sh
