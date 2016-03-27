@@ -237,7 +237,7 @@ app.get('*', function(req, res){
 
 //Define Levels
 WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '2e78cabf229b96c729960d05b7bac509', 5));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01', 2, 'sqli_pass', 5));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01', 4, '753d6de95f47825797dd74a04fe678e1', 5));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02', 2, 'sqli_pass', 10));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('blind_sqli', 'ilias_sqli03', 2, 'sqli_pass', 15));
 
