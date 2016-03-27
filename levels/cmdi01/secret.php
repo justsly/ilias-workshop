@@ -1,10 +1,14 @@
 <?php
 include('./config.php');
 
+ob_start();
+include('./dc_secret.cfg');
+$dc_secret = ob_get_clean();
+
 echo "<script>";
 echo "var srv_ip='".$srv_ip."';";
 echo "var srv_port='".$srv_port."';";
-echo "var dc_secret='".include('./dc_secret.cfg');."';";
+echo "var dc_secret='".$dc_secret."';";
 echo "</script>";
 ?>
 <!DOCTYPE html>
