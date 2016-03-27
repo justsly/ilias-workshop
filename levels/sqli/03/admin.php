@@ -44,7 +44,7 @@ if($stmt = $db->prepare($sql)){
     </div>
     <div class="container">
     	<h3>Admin Login</h3>
-		<?
+		<?php
 		 if(isset($password) && isset($user)){
 			if(isset($datarow[0]) && $datarow[1] == "root") include('./admin_infos.php');
 		 	elseif(isset($datarow[0]) && $datarow[1] == "admin") echo "<p class='text-info'>Du bist als Admin einloggt. Jedoch haben wir beschlossen, dass Admin keine Rechte hat. Komme wieder wenn du die Daten von 'root' kennst!</p>";
@@ -78,7 +78,7 @@ if($stmt = $db->prepare($sql)){
 				Lies dir genau den Quellcode der ganzen Aufgabe durch. <a href='admin.txt'>Quellcode Admin Login</a>
 			</small>
 	    		</p>
-		<?
+		<?php
             	if(isset($db)) $db->close();                                                                                                                                           
             	?>
     </div>
