@@ -15,13 +15,15 @@ RUN mkdir /var/www/html/css
 RUN mkdir /var/www/html/jquery
 ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
-ADD sqli01/index.php /var/www/html/index.php
-ADD sqli01/dbconnect.php /var/www/html/dbconnect.php
-ADD sqli01/sql_statement.txt /var/www/html/sql_statement.txt
-ADD sqli01/admin_infos.php /var/www/html/admin_infos.php
+ADD sqli/03/index.php /var/www/html/index.php
+ADD sqli/03/index.txt /var/www/html/index.txt
+ADD sqli/dbconnect.php /var/www/html/dbconnect.php
+ADD sqli/03/admin.php /var/www/html/admin.php
+ADD sqli/03/admin.txt /var/www/html/admin.txt
+ADD sqli/admin_infos.php /var/www/html/admin_infos.php
 ADD config.php /var/www/html/config.php
-ADD sqli01/setup.sh /root/setup.sh
-ADD sqli01/sqli01.sql /root/sqli01.sql
+ADD sqli/03/setup.sh /root/setup.sh
+ADD sqli/03/sqli03.sql /root/sqli03.sql
 RUN chmod u+x /root/setup.sh
 
 # Clean up

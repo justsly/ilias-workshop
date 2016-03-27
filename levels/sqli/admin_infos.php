@@ -18,9 +18,9 @@ echo "</script>";
     <title>This is so secret</title>
 </head>
 <body>
-<p class="text-success">Lernziel erreicht. Du hast die erfolgreich als admin eingeloggt.</p>
+<p class="text-success">Lernziel erreicht. Du hast dich erfolgreich als admin eingeloggt.</p>
 
-<button class="btn" id="complete_level">Aufgabe einreichen!</button>
+<p><button class="btn" id="complete_level">Aufgabe einreichen!</button></p>
 
 <script>
 	$("#complete_level").click(function(){
