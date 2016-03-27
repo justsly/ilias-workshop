@@ -5,6 +5,7 @@ var WorkshopModule = (function () {
 	var exec = require('child_process').exec;
 	var container_list = [];
 	var level_list = [];
+	var secret_list = [];
 
 	return {
 		Level: function (lkey, lvalue, qid, answer, points) {
@@ -24,6 +25,17 @@ var WorkshopModule = (function () {
 				}
 			}
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
+		},
+		addSecret : function(dc_secret){
+			secret_list.push(dc_secret);
+		},
+		checkSecretExists : function(dc_secret, cb){
+			for (var i = 0; i < secret_list.length; i++) {
+				if (secret_list[i] == dc_secret){
+					return ((typeof(cb) === 'function') ? cb(null, true) : true);
+				}
+			}
+			return ((typeof(cb) === 'function') ? cb(null, false) : false);
 		},
 		//Define object DockerContainer
 		DockerContainer: function (docker_h, docker_p, active_id, uid, lid) {
@@ -150,6 +162,7 @@ var WorkshopModule = (function () {
 const soap = require('soap');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const config = require('./config');
 const app = express();
 
@@ -158,6 +171,9 @@ if (!config.inDebug) {
 	console = console || {};
 	console.log = function(){};
 }
+
+//Middleware to parse body
+app.use(bodyParser());
 
 //Middleware to parse Cookies
 app.use(cookieParser());
@@ -197,22 +213,41 @@ app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(re
 });
 
 // Return to ILIAS with complete flag
-app.get('/container/:docker_hash/complete', function(req, res){
+app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-		if(citem){
-			WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-				WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
-					if(result) {
-						res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
-					} else {
-						res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
-					}
-				});
-			});
-		} else {
-			res.status(404).send({success:false, error: 'container not found!'});
-		}
+        WorkshopModule.checkSecretExists(req.params.dc_secret, function(err, secret_exists){
+            if(secret_exists){
+                if(citem){
+                    WorkshopModule.getLevelById(citem.lid, function(err, litem) {
+                        WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
+                            if(result) {
+                                res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
+                            } else {
+                                res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
+                            }
+                        });
+                    });
+                } else {
+                    res.status(404).send({success:false, error: 'container not found!'});
+                }
+            } else {
+                res.status(500).send({success:false, error: 'secret does not exist.'});
+            }
+        })
 	});
+});
+
+app.post('/container/secret', function(req, res){
+	if(req.body && req.body.dc_auth && req.body.secret){
+		if(req.body.dc_auth == config.dc_auth){
+			WorkshopModule.addSecret(req.body.secret);
+			res.status(200).send({success:true});
+		} else {
+            res.status(500).send({success:false, error: 'wrong auth key. this is no challenge.'});
+        }
+	} else {
+        res.status(500).send({success:false, error: 'Wrong Format. Please use JSON.'})
+    }
 });
 
 //Define Routing for Container Flush
