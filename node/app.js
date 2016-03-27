@@ -240,6 +240,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 app.post('/container/secret', function(req, res){
 	if(req.body && req.body.dc_auth && req.body.secret){
 		if(req.body.dc_auth == config.dc_auth){
+            console.log("secret: "+ req.body.secret + "set");
 			WorkshopModule.addSecret(req.body.secret);
 			res.status(200).send({success:true});
 		} else {

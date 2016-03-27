@@ -8,7 +8,7 @@ MAINTAINER BB
 RUN apt-get update -y && apt-get upgrade -y
 
 # Install packages
-RUN apt-get install -y apache2 php5
+RUN apt-get install -y apache2 php5 curl
 
 # Add Level Files to Container
 RUN mkdir /var/www/html/css
