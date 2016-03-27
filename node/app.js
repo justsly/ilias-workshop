@@ -173,7 +173,10 @@ if (!config.inDebug) {
 }
 
 //Middleware to parse body
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 //Middleware to parse Cookies
 app.use(cookieParser());
