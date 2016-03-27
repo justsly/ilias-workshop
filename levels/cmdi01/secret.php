@@ -1,11 +1,10 @@
 <?php
 include('./config.php');
-include('./dc_secret.php');
 
 echo "<script>";
 echo "var srv_ip='".$srv_ip."';";
 echo "var srv_port='".$srv_port."';";
-echo "var dc_secret='".$dc_secret."';";
+echo "var dc_secret='".include('./dc_secret.cfg');."';";
 echo "</script>";
 ?>
 <!DOCTYPE html>
