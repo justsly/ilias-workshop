@@ -1,9 +1,6 @@
 <?php
 include('./config.php');
-
-ob_start();
-include('./dc_secret.cfg');
-$dc_secret = ob_get_clean();
+include('./dc_secret.php');
 
 echo "<script>";
 echo "var srv_ip='".$srv_ip."';";
