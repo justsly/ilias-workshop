@@ -238,6 +238,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 });
 
 app.post('/container/secret', function(req, res){
+    console.log("POST /container/secret called");
 	if(req.body && req.body.dc_auth && req.body.secret){
 		if(req.body.dc_auth == config.dc_auth){
             console.log("secret: "+ req.body.secret + "set");
