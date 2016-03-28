@@ -12,6 +12,7 @@ echo "</script>";
 
 <p><button class="btn" id="complete_level">Aufgabe einreichen!</button></p>
 
+<script src="jquery/jquery-1.12.1.min.js"></script>
 <script>
 	$("#complete_level").click(function(){
 	    $.ajax({
