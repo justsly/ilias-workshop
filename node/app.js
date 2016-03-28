@@ -37,6 +37,15 @@ var WorkshopModule = (function () {
 			}
 			return ((typeof(cb) === 'function') ? cb(null, false) : false);
 		},
+        removeSecret: function (dc_secret) {
+            for (var i = 0; i < container_list.length; i++) {
+                if (secret_list[i] == dc_secret) {
+                    secret_list.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        },
 		//Define object DockerContainer
 		DockerContainer: function (docker_h, docker_p, active_id, uid, lid) {
 			this.docker_hash = docker_h;
@@ -49,7 +58,7 @@ var WorkshopModule = (function () {
 		addNewContainer: function (dc) {
 			container_list.push(dc);
 		},
-		//Remove DockerContainer object from list if matches given hash
+		//Remove Secret from list if matches
 		removeContainerByHash: function (docker_hash) {
 			for (var i = 0; i < container_list.length; i++) {
 				if (container_list[i].docker_hash == docker_hash) {
@@ -225,6 +234,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
                         WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
                             if(result) {
                                 res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
+                                WorkshopModule.removeSecret(req.params.dc_secret);
                             } else {
                                 res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
                             }

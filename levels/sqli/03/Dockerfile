@@ -23,8 +23,10 @@ ADD sqli/03/admin.txt /var/www/html/admin.txt
 ADD sqli/admin_infos.php /var/www/html/admin_infos.php
 ADD config.php /var/www/html/config.php
 ADD sqli/03/setup.sh /root/setup.sh
+ADD secret_generator.sh /root/secret_generator.sh
 ADD sqli/03/sqli03.sql /root/sqli03.sql
 RUN chmod u+x /root/setup.sh
+RUN chmod u+x /root/secret_generator.sh
 
 # Clean up
 RUN rm /var/www/html/index.html
