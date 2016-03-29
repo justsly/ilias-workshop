@@ -234,7 +234,7 @@ app.post('/container/create', function(req, res){
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
 			if(isvalid) {
-				WorkshopModule.createDockerContainer(req.params.level_id, req.params.active_id, req.params.uid, function(err, citem){
+				WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, citem){
 					if(citem) res.status(200).send({success:true, hash:citem.docker_hash});
 					else res.status(500).send({success:true, error : 'docker creation failed'});
 				});
