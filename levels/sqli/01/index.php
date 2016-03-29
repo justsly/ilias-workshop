@@ -25,15 +25,8 @@ if($result = $db->query($sql)){
     <title>SQL-Inject</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Le styles -->
+    <meta name="author" content="BB">
     <link href="css/style.css" rel="stylesheet">
-    <style>
-      body {
-	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
   </head>
 
   <body>
@@ -45,7 +38,7 @@ if($result = $db->query($sql)){
       </div>
     </div>
     <div class="container">
-    	<h3>SQLI Level 1</h3>
+    	<h3>SQL Injection 1</h3>
 		<?php
 		 if(isset($password) && $password != "" && isset($user) && $user != ""){
 		 	if(isset($debug) && isset($sql)){

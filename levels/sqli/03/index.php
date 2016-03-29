@@ -26,7 +26,7 @@ if($result = $db->query($sql)){
     <title>SQL Injection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="BB">
     <link href="/css/style.css" rel="stylesheet">
   </head>
 
@@ -39,7 +39,7 @@ if($result = $db->query($sql)){
       </div>
     </div>
     <div class="container">
-    	<h3>SQL Injection 4</h3>
+    	<h3>SQL Injection 3</h3>
 		<div class="navbar navbar-inverse">
 			<div class="navbar-inner">
 				<div class="container">

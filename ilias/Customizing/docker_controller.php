@@ -99,11 +99,46 @@ if ($_GET['action'] == 'go') {
     $port = '8080';
     $node = '/container/create/';
 
-    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
+    /*$location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
     header("Location: " . $location);
     die('If your browser does not redirect. Navigate to: ' . $location);
     exit();
+    */
 
+    $url = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node
 
+    $data = '{"level":'.$level.',"aid":"'.$active_id.',"uid":"'.$sid.'"}';
+
+    //$content = json_encode($data);
+          $content = $data;
+          $curl = curl_init($url);
+          curl_setopt($curl, CURLOPT_HEADER, false);
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+          curl_setopt($curl, CURLOPT_POST, true);
+          curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+          curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); //curl error SSL certificate problem, verify that the CA cert is OK
+
+          $result     = curl_exec($curl);
+          if(strlen($result) > 0) {
+            $response   = json_decode($result);
+    /*        echo "<pre>";
+            var_dump(curl_error($curl));
+            var_dump($result);
+            var_dump($response);
+            echo $response->status;
+            echo "</pre>";
+    */
+            if ($response->status === 200) {
+              $message = "<p><font color=green>".$response->msg."</font></p>";
+            } else {
+              $message = "<p><font color=red>".$response->msg."</font></p>";
+            }
+          } else {
+            $message = "<p><font color=red>Could not contact Docker server. Please contact an admin!</font></p>";
+          }
+          curl_close($curl);
+
+            echo $message;
 }
 ?>

@@ -227,6 +227,22 @@ app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(re
 	});
 });
 
+//Methde to create Level from ILIAS
+docker.post('/container/create', function(req, res){
+	console.log("POST /container/create called");
+	if(req.body && req.body.level && req.body.aid && req.body.uid){
+		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
+			if(isvald) res.status(200).send({success:true, msg:"Post geht!"});
+			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
+		})
+	}
+});
+
+docker.get('container/:docker_hash', function(req, res){
+	console.log('did it');
+	res.status(200).send({msg:"You did it!"});
+});
+
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
