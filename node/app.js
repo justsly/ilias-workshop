@@ -93,7 +93,7 @@ var WorkshopModule = (function () {
 									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
 										//WorkshopModule.redirectToPort(dc, res);
-										return ((typeof(cb) === 'function') ? cb(null, dc) : dc);
+										return ((typeof(cb) === 'function') ? cb(null, dc.docker_hash) : dc.docker_hash);
 									});
 								}
 							});
@@ -234,8 +234,8 @@ app.post('/container/create', function(req, res){
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
 			if(isvalid) {
-				WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, citem){
-					if(citem) res.status(200).send({success:true, hash:citem.docker_hash});
+				WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
+					if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
 					else res.status(500).send({success:true, error : 'docker creation failed'});
 				});
 			}
