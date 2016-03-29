@@ -98,6 +98,7 @@ if ($_GET['action'] == 'go') {
     $domain = '81.7.10.250';
     $port = '8080';
     $node = '/container/create/';
+    $rd_node = '/container/'
 
     $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
     /*header("Location: " . $location);
@@ -130,10 +131,11 @@ if ($_GET['action'] == 'go') {
             echo "</pre>";
     */
             if ($response->success == true) {
-              $message = "<p><font color=green>".$response->msg."</font></p>";
+              $dc_hash = $response->hash;
+              $redirect_location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $rd_node . $dc_hash;
               header("Location: " . $location);
             } else {
-              $message = "<p><font color=red>".$response->msg."</font></p>";
+              $message = "<p><font color=red>".$response->error."</font></p>";
             }
           } else {
             $message = "<p><font color=red>Could not contact Docker server. Please contact an admin!</font></p>";

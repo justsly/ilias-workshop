@@ -79,7 +79,7 @@ var WorkshopModule = (function () {
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
 		//Create DockerContainer and redirect User to this Instance
-		createDockerContainer: function (lid, active_id, uid, res) {
+		createDockerContainer: function (lid, active_id, uid, cb) {
 			WorkshopModule.getLevelById(lid, function(err, litem) {
 				if(litem) {
 					console.log('level exists: ' + litem.lvalue);
@@ -92,18 +92,19 @@ var WorkshopModule = (function () {
 									var docker_port = stdout.match(/\:\d+/)[0];
 									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
-										WorkshopModule.redirectToPort(dc, res);
+										//WorkshopModule.redirectToPort(dc, res);
+										return ((typeof(cb) === 'function') ? cb(null, dc) : dc);
 									});
 								}
 							});
 						} else {
 							console.log('error:' + error);
-							res.status(500).send({success: false, error: error});
+							//res.status(500).send({success: false, error: error});
 						}
 					});
 				} else {
 					console.log('docker creation error');
-					res.status(500).send({success: false, error: 'docker creation failed'});
+					//res.status(500).send({success: false, error: 'docker creation failed'});
 				}
 			});
 		},
@@ -232,15 +233,23 @@ app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
-			if(isvalid) res.status(200).send({success:true, msg:"Post geht!"});
+			if(isvalid) {
+				WorkshopModule.createDockerContainer(req.params.level_id, req.params.active_id, req.params.uid, function(err, citem){
+					if(citem) res.status(200).send({success:true, hash:citem.docker_hash});
+					else res.status(500).send({success:true, error : 'docker creation failed'});
+				});
+			}
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		})
 	}
 });
 
 app.get('container/:docker_hash', function(req, res){
-	console.log('did it');
-	res.status(200).send({msg:"You did it!"});
+	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
+		if (!citem) {
+			WorkshopModule.redirectToPort(citem, res);
+		} else res.status(500).send({success:false, error: 'internal Server error'});
+	});
 });
 
 // Return to ILIAS with complete flag
@@ -309,4 +318,3 @@ WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '
 WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01', 4, '753d6de95f47825797dd74a04fe678e1', 5));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02', 2, '6465b38b525937d2ef8177e04dcb2eb2', 10));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('blind_sqli', 'ilias_sqli03', 6, 'dc9bb71adee86f6624de86061dcb34d1', 15));
-
