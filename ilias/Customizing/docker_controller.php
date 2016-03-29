@@ -98,7 +98,7 @@ if ($_GET['action'] == 'go') {
     $domain = '81.7.10.250';
     $port = '8080';
     $node = '/container/create/';
-    $rd_node = '/container/'
+    $rd_node = '/container/';
 
     $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
     /*header("Location: " . $location);
