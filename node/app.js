@@ -228,7 +228,7 @@ app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(re
 });
 
 //Methde to create Level from ILIAS
-docker.post('/container/create', function(req, res){
+app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
@@ -238,7 +238,7 @@ docker.post('/container/create', function(req, res){
 	}
 });
 
-docker.get('container/:docker_hash', function(req, res){
+app.get('container/:docker_hash', function(req, res){
 	console.log('did it');
 	res.status(200).send({msg:"You did it!"});
 });
