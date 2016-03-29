@@ -154,8 +154,11 @@ var WorkshopModule = (function () {
 			var login_data = {client: config.soap_client, username: config.soap_user, password: config.soap_user};
 			soap.createClient(config.wsdl_url, function(err, client) {
 				client.login(login_data, function(err, result){
+					console.log("login result: " + result);
+					console.log("result sid: " + result.sid);
 					var args = {sid: result.sid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
 					client.saveQuestionSolution(args, function(err, result) {
+						console.log("save log: " + result);
 						if(result.html) {
 							console.log("answer send ok");
 							return ((typeof(cb) === 'function') ? cb(null, true) : true);
