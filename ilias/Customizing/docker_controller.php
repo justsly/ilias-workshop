@@ -93,9 +93,9 @@ if ($_GET['action'] == 'go') {
 
 
     // redirect user to docker page
-    // http://192.168.56.101:8080/container/create/cmdi01/ref_id/77/page_id/7/
+    // http://192.168.56.101:8080/container/create/ping/active_id/3/uid/PHPSESSID
     $protocol = 'http://';
-    $domain = '192.168.56.101';
+    $domain = '81.7.10.250';
     $port = '8080';
     $node = '/container/create/';
 

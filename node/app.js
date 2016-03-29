@@ -55,8 +55,9 @@ var WorkshopModule = (function () {
 			this.lid = lid;
 		},
 		//Push new DockerContainer object to list
-		addNewContainer: function (dc) {
+		addNewContainer: function (dc, cb) {
 			container_list.push(dc);
+			return ((typeof(cb) === 'function') ? cb(null, dc) : dc);
 		},
 		//Remove Secret from list if matches
 		removeContainerByHash: function (docker_hash) {
@@ -89,17 +90,14 @@ var WorkshopModule = (function () {
 							exec('docker port ' + docker_hash, function (error, stdout) {
 								if (!error) {
 									var docker_port = stdout.match(/\:\d+/)[0];
-									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid));
-									setTimeout(function () {
+									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid, function(err, dc){
 										res.writeHead(302, {
-											'Location': 'http://' + config.srv_ip + '' + docker_port,
-											'Set-Cookie': ['dockerHash=' + docker_hash + '; Path=/;']
+											'Location': 'http://' + config.srv_ip + '' + dc.docker_port,
+											'Set-Cookie': ['dockerHash=' + dc.docker_hash + '; Path=/;']
 										});
 										res.end();
-										setTimeout(function () {
-											WorkshopModule.destroyContainer(docker_hash);
-										}, 1800000);
-									}, 3000);
+										WorkshopModule.setContainerTimeout(dc.docker_hash);
+									}));
 								}
 							});
 						} else {
@@ -112,6 +110,13 @@ var WorkshopModule = (function () {
 					res.status(500).send({success: false, error: 'docker creation failed'});
 				}
 			});
+		},
+		setContainerTimeout : function(docker_hash){
+			console.log("Timout for hash: " + docker_hash + " set.");
+			setTimeout(function () {
+				console.log("Timeout for hash: " +docker_hash + " reached");
+				WorkshopModule.destroyContainer(docker_hash);
+			}, 180000);
 		},
 		destroyContainer: function (docker_hash) {
 			var cmd = 'docker stop ' + docker_hash + '&& docker rm ' + docker_hash;
