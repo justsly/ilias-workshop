@@ -105,7 +105,7 @@ if ($_GET['action'] == 'go') {
     exit();
     */
 
-    $url = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node
+    $url = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node;
 
     $data = '{"level":'.$level.',"aid":"'.$active_id.',"uid":"'.$sid.'"}';
 
