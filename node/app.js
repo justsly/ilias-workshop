@@ -142,7 +142,7 @@ var WorkshopModule = (function () {
 		},
 		redirectToPort: function (docker_hash, res) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
-				if (!citem) {
+				if (citem) {
 					res.writeHead(302, {
 						'Location': 'http://' + config.srv_ip + '' + citem.docker_port,
 						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
