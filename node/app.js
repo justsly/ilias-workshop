@@ -78,9 +78,10 @@ var WorkshopModule = (function () {
 			}
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
+		//Returns DockerContainer object from list if matches given uid
 		findContainerByUid: function (uid, cb){
 			for (var i = 0; i < container_list.length; i++) {
-				if (container_list[i].uid === uid) {
+				if (container_list[i].uid == uid) {
 					return ((typeof(cb) === 'function') ? cb(null, container_list[i]) : container_list[i]);
 				}
 			}
@@ -100,7 +101,6 @@ var WorkshopModule = (function () {
 									var docker_port = stdout.match(/\:\d+/)[0];
 									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
-										//WorkshopModule.redirectToPort(dc, res);
 										return ((typeof(cb) === 'function') ? cb(null, dc.docker_hash) : dc.docker_hash);
 									});
 								}
