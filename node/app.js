@@ -232,7 +232,7 @@ app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
-			if(isvald) res.status(200).send({success:true, msg:"Post geht!"});
+			if(isvalid) res.status(200).send({success:true, msg:"Post geht!"});
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		})
 	}
