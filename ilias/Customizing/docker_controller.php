@@ -99,8 +99,8 @@ if ($_GET['action'] == 'go') {
     $port = '8080';
     $node = '/container/create/';
 
-    /*$location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
-    header("Location: " . $location);
+    $location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node . $level . '/active_id/' . $active_id . '/uid/' . $sid;
+    /*header("Location: " . $location);
     die('If your browser does not redirect. Navigate to: ' . $location);
     exit();
     */
@@ -131,6 +131,7 @@ if ($_GET['action'] == 'go') {
     */
             if ($response->status === 200) {
               $message = "<p><font color=green>".$response->msg."</font></p>";
+              header("Location: " . $location);
             } else {
               $message = "<p><font color=red>".$response->msg."</font></p>";
             }
