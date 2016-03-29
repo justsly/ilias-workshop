@@ -148,24 +148,21 @@ var WorkshopModule = (function () {
 				});
 			}.bind(this));
         },
-		sendSolutionToILIAS : function (answer, aid, qid, points, cb) {
+		sendSolutionToILIAS : function (answer, uid, aid, qid, points, cb) {
 			console.log("try to send answer: " + answer);
 			var sol = "<values><value>" + answer + "</value><value></value><points>" + points + "</points></values>";
-			var login_data = {client: config.soap_client, username: config.soap_user, password: config.soap_pass};
+			var args = {sid: uid + "::" + config.client_id, active_id: aid, question_id: qid, pass: 0, solution: sol};
 			soap.createClient(config.wsdl_url, function(err, client) {
-				client.login(login_data, function(err, lresult){
-					var args = {sid: lresult.sid, active_id: aid, question_id: qid, pass: 0, solution: sol};
-					client.saveQuestionSolution(args, function(err, result) {
-						console.log("save log: " + result);
-						if(result.html) {
-							console.log("answer send ok");
-							return ((typeof(cb) === 'function') ? cb(null, true) : true);
-						} else {
-							console.log("answer send not ok");
-							return ((typeof(cb) === 'function') ? cb(null, false) : false);
-						}
-					})
-				});
+				client.saveQuestionSolution(args, function(err, result) {
+					console.log("save log: " + result);
+					if(result.html) {
+						console.log("answer send ok");
+						return ((typeof(cb) === 'function') ? cb(null, true) : true);
+					} else {
+						console.log("answer send not ok");
+						return ((typeof(cb) === 'function') ? cb(null, false) : false);
+					}
+				})
 			}.bind(this));
 		}
 	}
@@ -235,7 +232,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
             if(secret_exists){
                 if(citem){
                     WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-                        WorkshopModule.sendSolutionToILIAS(litem.answer, citem.active_id, litem.qid, litem.points, function(err, result) {
+                        WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
                             if(result) {
                                 res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
                                 WorkshopModule.removeSecret(req.params.dc_secret);

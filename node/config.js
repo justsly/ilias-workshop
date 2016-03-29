@@ -12,9 +12,7 @@ config.srv_port = 8080;
 config.dc_auth = "c611795deb9b94c8f9ea7f1bae0884ab";
 
 // Define SOAP Client, User and password
-config.soap_client = "ilias";
-config.soap_user = "soap";
-config.soap_pass = "30f550c83b297de5f0e945df155663cd";
+config.client_id = "ilias";
 
 //Switch Debug mode on or off
 config.inDebug = true;
