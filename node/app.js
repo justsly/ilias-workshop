@@ -139,7 +139,7 @@ var WorkshopModule = (function () {
 			});
 		},
 		redirectToPort: function (docker_hash, res) {
-			WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
+			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (!citem) {
 					res.writeHead(302, {
 						'Location': 'http://' + config.srv_ip + '' + citem.docker_port,
