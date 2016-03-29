@@ -61,7 +61,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','d75dc97cba442fa2acd95e6b9f40301d'),(3,'root','f6ae02c12ed752bcdf92060492cf6572');
+INSERT INTO `users` VALUES (1,'admin','d75dc97cba442fa2acd95e6b9f40301d'),(3,'root',md5(floor(rand()*9001)+1000));
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
