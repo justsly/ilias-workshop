@@ -244,7 +244,7 @@ app.post('/container/create', function(req, res){
 	}
 });
 
-app.get('container/:docker_hash', function(req, res){
+app.get('/container/:docker_hash', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if (!citem) {
 			WorkshopModule.redirectToPort(citem, res);
