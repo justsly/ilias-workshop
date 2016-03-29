@@ -129,7 +129,7 @@ if ($_GET['action'] == 'go') {
             echo $response->status;
             echo "</pre>";
     */
-            if ($response->status == 200) {
+            if ($response->success == true) {
               $message = "<p><font color=green>".$response->msg."</font></p>";
               header("Location: " . $location);
             } else {
