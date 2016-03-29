@@ -78,6 +78,14 @@ var WorkshopModule = (function () {
 			}
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
+		findContainerByUid: function (uid, cb){
+			for (var i = 0; i < container_list.length; i++) {
+				if (container_list[i].uid === uid) {
+					return ((typeof(cb) === 'function') ? cb(null, container_list[i]) : container_list[i]);
+				}
+			}
+			return ((typeof(cb) === 'function') ? cb(null, null) : null);
+		},
 		//Create DockerContainer and redirect User to this Instance
 		createDockerContainer: function (lid, active_id, uid, cb) {
 			WorkshopModule.getLevelById(lid, function(err, litem) {
@@ -120,23 +128,28 @@ var WorkshopModule = (function () {
 			exec(cmd);
 			WorkshopModule.removeContainerByHash(docker_hash);
 		},
-		checkExistingContainer: function (req, res, cb) {
-			if (req.cookies) var docker_hash = req.cookies['dockerHash'];
-			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
+		checkExistingContainer: function (uid, res, cb) {
+			WorkshopModule.findContainerByUid(uid, function(err, citem) {
 				if (citem) {
-					WorkshopModule.redirectToPort(citem, res);
+					WorkshopModule.redirectToPort(citem.docker_hash, res);
 					return ((typeof(cb) === 'function') ? cb(null, true) : true);
 				} else {
 					return ((typeof(cb) === 'function') ? cb(null, false) : false);
 				}
 			});
 		},
-		redirectToPort: function (dc, res) {
-			res.writeHead(302, {
-				'Location': 'http://' + config.srv_ip + '' + dc.docker_port,
-				'Set-Cookie': 'dockerHash=' + dc.docker_hash + '; Path=/;'
+		redirectToPort: function (docker_hash, res) {
+			WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
+				if (!citem) {
+					res.writeHead(302, {
+						'Location': 'http://' + config.srv_ip + '' + citem.docker_port,
+						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
+					});
+					res.end();
+				} else {
+					res.status(500).send({success: false, error: 'internal Server error'});
+				}
 			});
-			res.end();
 		},
         //SOAP Call to check if uid is valid in ILIAS
         checkValidSid : function (uid, cb) {
@@ -234,10 +247,14 @@ app.post('/container/create', function(req, res){
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
 		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
 			if(isvalid) {
-				WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
-					if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
-					else res.status(500).send({success:true, error : 'docker creation failed'});
-				});
+				WorkshopModule.checkExistingContainer(req.body.uid, res, function(error, exists){
+					if(!exists){
+						WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
+							if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
+							else res.status(500).send({success:true, error : 'docker creation failed'});
+						});
+					}
+				})
 			}
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		})
@@ -245,11 +262,7 @@ app.post('/container/create', function(req, res){
 });
 
 app.get('/container/:docker_hash', function(req, res){
-	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-		if (!citem) {
-			WorkshopModule.redirectToPort(citem, res);
-		} else res.status(500).send({success:false, error: 'internal Server error'});
-	});
+	WorkshopModule.redirectToPort(req.params.docker_hash, res);
 });
 
 // Return to ILIAS with complete flag
