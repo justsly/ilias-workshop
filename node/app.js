@@ -91,12 +91,8 @@ var WorkshopModule = (function () {
 								if (!error) {
 									var docker_port = stdout.match(/\:\d+/)[0];
 									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
-										res.writeHead(302, {
-											'Location': 'http://' + config.srv_ip + '' + dc.docker_port,
-											'Set-Cookie': ['dockerHash=' + dc.docker_hash + '; Path=/;']
-										});
-										res.end();
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
+										WorkshopModule.redirectToPort(dc, res);
 									});
 								}
 							});
@@ -112,11 +108,11 @@ var WorkshopModule = (function () {
 			});
 		},
 		setContainerTimeout : function(docker_hash){
-			console.log("Timout for hash: " + docker_hash + " set.");
+			console.log("Timeout for hash: " + docker_hash + " set.");
 			setTimeout(function () {
 				console.log("Timeout for hash: " +docker_hash + " reached");
 				WorkshopModule.destroyContainer(docker_hash);
-			}, 180000);
+			}, 1800000);
 		},
 		destroyContainer: function (docker_hash) {
 			var cmd = 'docker stop ' + docker_hash + '&& docker rm ' + docker_hash;
@@ -127,16 +123,17 @@ var WorkshopModule = (function () {
 			if (req.cookies) var docker_hash = req.cookies['dockerHash'];
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					WorkshopModule.redirectToPort(citem.docker_port, res);
+					WorkshopModule.redirectToPort(citem, res);
 					return ((typeof(cb) === 'function') ? cb(null, true) : true);
 				} else {
 					return ((typeof(cb) === 'function') ? cb(null, false) : false);
 				}
 			});
 		},
-		redirectToPort: function (docker_port, res) {
+		redirectToPort: function (dc, res) {
 			res.writeHead(302, {
-				'Location': 'http://' + config.srv_ip + '' + docker_port
+				'Location': 'http://' + config.srv_ip + '' + dc.docker_port,
+				'Set-Cookie': 'dockerHash=' + dc.docker_hash + '; Path=/;'
 			});
 			res.end();
 		},
