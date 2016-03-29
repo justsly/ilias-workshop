@@ -210,11 +210,11 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 //Middleware to check if user has already an existing container. If not proceed else redirect to exiting container.
-app.use(function(req, res, next){
+/*app.use(function(req, res, next){
 	WorkshopModule.checkExistingContainer(req, res, function(err, exists) {
 		if(!exists) next();
 	});
-});
+});*/
 
 //Define Routing for the Websecurity Levels
 app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
