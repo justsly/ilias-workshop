@@ -132,7 +132,7 @@ if ($_GET['action'] == 'go') {
     */
             if ($response->success == true) {
               $dc_hash = $response->hash;
-              $redirect_location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $rd_node . $dc_hash;
+              $redirect_location = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $rd_node . $dc_hash . '/redirect';
               header("Location: " . $redirect_location);
             } else {
               $message = "<p><font color=red>".$response->error."</font></p>";

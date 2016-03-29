@@ -82,7 +82,7 @@ var WorkshopModule = (function () {
 		findContainerByUid: function (uid, cb){
 			console.log("try to find: " + uid);
 			for (var i = 0; i < container_list.length; i++) {
-				if (container_list[i].uid == uid) {
+				if (container_list[i].uid === uid) {
 					console.log("found " + uid);
 					return ((typeof(cb) === 'function') ? cb(null, container_list[i]) : container_list[i]);
 				}
@@ -232,7 +232,7 @@ app.use(allowCrossDomain);
 });*/
 
 //Define Routing for the Websecurity Levels
-app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
+/*app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
 	WorkshopModule.checkValidSid(req.params.uid, function(err, isvalid) {
 		console.log("valid uid: " + isvalid);
 		if(isvalid) {
@@ -241,7 +241,7 @@ app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(re
 			return res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		}
 	});
-});
+});*/
 
 //Methde to create Level from ILIAS
 app.post('/container/create', function(req, res){
@@ -263,7 +263,7 @@ app.post('/container/create', function(req, res){
 	}
 });
 
-app.get('/container/:docker_hash', function(req, res){
+app.get('/container/:docker_hash/redirect', function(req, res){
 	WorkshopModule.redirectToPort(req.params.docker_hash, res);
 });
 
