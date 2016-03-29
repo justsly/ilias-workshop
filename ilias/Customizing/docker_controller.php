@@ -107,7 +107,7 @@ if ($_GET['action'] == 'go') {
 
     $url = $protocol . $domain . ((strlen($port) > 0) ? ':' . $port : '') . $node;
 
-    $data = '{"level":'.$level.',"aid":"'.$active_id.',"uid":"'.$sid.'"}';
+    $data = '{"level":'.$level.',"aid":"'.$active_id.',"uid":"'.$sid.'}';
 
     //$content = json_encode($data);
           $content = $data;
