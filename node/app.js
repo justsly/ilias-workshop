@@ -252,9 +252,9 @@ app.post('/container/create', function(req, res){
 					if(!exists){
 						WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
 							if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
-							else res.status(200).send({success:true, hash:exists});
+							else res.status(200).send({success:true, error : 'docker creation failed'});
 						});
-					}
+					} else res.status(200).send({success:true, hash:exists});
 				})
 			}
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
