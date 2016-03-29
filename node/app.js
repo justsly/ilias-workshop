@@ -151,12 +151,10 @@ var WorkshopModule = (function () {
 		sendSolutionToILIAS : function (answer, aid, qid, points, cb) {
 			console.log("try to send answer: " + answer);
 			var sol = "<values><value>" + answer + "</value><value></value><points>" + points + "</points></values>";
-			var login_data = {client: config.soap_client, username: config.soap_user, password: config.soap_user};
+			var login_data = {client: config.soap_client, username: config.soap_user, password: config.soap_pass};
 			soap.createClient(config.wsdl_url, function(err, client) {
-				client.login(login_data, function(err, result){
-					console.log("login result: " + result);
-					console.log("result sid: " + result.sid);
-					var args = {sid: result.sid + '::ilias', active_id: aid, question_id: qid, pass: 0, solution: sol};
+				client.login(login_data, function(err, lresult){
+					var args = {sid: lresult.sid, active_id: aid, question_id: qid, pass: 0, solution: sol};
 					client.saveQuestionSolution(args, function(err, result) {
 						console.log("save log: " + result);
 						if(result.html) {
