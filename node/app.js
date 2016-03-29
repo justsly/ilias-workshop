@@ -90,14 +90,14 @@ var WorkshopModule = (function () {
 							exec('docker port ' + docker_hash, function (error, stdout) {
 								if (!error) {
 									var docker_port = stdout.match(/\:\d+/)[0];
-									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid, function(err, dc){
+									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
 										res.writeHead(302, {
 											'Location': 'http://' + config.srv_ip + '' + dc.docker_port,
 											'Set-Cookie': ['dockerHash=' + dc.docker_hash + '; Path=/;']
 										});
 										res.end();
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
-									}));
+									});
 								}
 							});
 						} else {
