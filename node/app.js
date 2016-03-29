@@ -80,8 +80,10 @@ var WorkshopModule = (function () {
 		},
 		//Returns DockerContainer object from list if matches given uid
 		findContainerByUid: function (uid, cb){
+			console.log("try to find: " + uid);
 			for (var i = 0; i < container_list.length; i++) {
 				if (container_list[i].uid == uid) {
+					console.log("found " + uid);
 					return ((typeof(cb) === 'function') ? cb(null, container_list[i]) : container_list[i]);
 				}
 			}
