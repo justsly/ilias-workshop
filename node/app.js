@@ -133,8 +133,7 @@ var WorkshopModule = (function () {
 		checkExistingContainer: function (uid, res, cb) {
 			WorkshopModule.findContainerByUid(uid, function(err, citem) {
 				if (citem) {
-					WorkshopModule.redirectToPort(citem.docker_hash, res);
-					return ((typeof(cb) === 'function') ? cb(null, true) : true);
+					return ((typeof(cb) === 'function') ? cb(null, citem.docker_hash) : citem.docker_hash);
 				} else {
 					return ((typeof(cb) === 'function') ? cb(null, false) : false);
 				}
@@ -253,6 +252,7 @@ app.post('/container/create', function(req, res){
 					if(!exists){
 						WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
 							if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
+							else res.status(200).send({success:true, hash:exists});
 						});
 					}
 				})
