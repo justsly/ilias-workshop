@@ -154,7 +154,7 @@ var WorkshopModule = (function () {
 		},
         //SOAP Call to check if uid is valid in ILIAS
         checkValidSid : function (uid, cb) {
-			var args = {sid: uid + '::ilias'};
+			var args = {sid: uid + '::' + config.client_id};
 			soap.createClient(config.wsdl_url, function(err, client) {
 				client.getUserIdBySid(args, function(err, result) {
 					if(result.usr_id){
@@ -259,6 +259,20 @@ app.post('/container/create', function(req, res){
 			}
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		})
+	}
+});
+
+app.post('/beta/container/create', function(req, res){
+	console.log("POST /beta/container/create called");
+	if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url){
+		WorkshopModule.checkExistingContainer(req.body.user_id, res, function(error, exists){
+			if(!exists){
+				WorkshopModule.createDockerContainer(req.body.level, 1, req.body.user_id, function(err, docker_hash){
+					if(docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
+					else res.status(500).send({success:false, error : 'docker creation failed'});
+				});
+			} else WorkshopModule.redirectToPort(docker_hash, res);
+		});
 	}
 });
 
