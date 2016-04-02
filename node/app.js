@@ -213,7 +213,7 @@ app.use(allowCrossDomain);
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
 	if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url && req.body.lis_outcome_service_url && req.body.launch_presentation_return_url && req.body.oauth_consumer_key) {
-		var provider = new lti.Provider(req.body.oauth_consumer_key, config.consumer_secret);
+		var provider = new lti.Provider('test', config.consumer_secret);
 		provider.valid_request(req, function (err, is_valid) {
 			// Check if the request is valid and if the outcomes service exists.
 			if (!is_valid || !provider.outcome_service) {
