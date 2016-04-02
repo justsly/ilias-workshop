@@ -108,12 +108,10 @@ var WorkshopModule = (function () {
 							});
 						} else {
 							console.log('error:' + error);
-							//res.status(500).send({success: false, error: error});
 						}
 					});
 				} else {
 					console.log('docker creation error');
-					//res.status(500).send({success: false, error: 'docker creation failed'});
 				}
 			});
 		},
@@ -163,7 +161,7 @@ var WorkshopModule = (function () {
 				}
 			};
 			provider.outcome_service.send_replace_result(1., function(err, result){
-				console.log("Result send to ILIAS: " + result); // True or false
+				console.log("Result send to ILIAS: " + result);
 				if(result) return ((typeof(cb) === 'function') ? cb(null, true) : true);
 				else return ((typeof(cb) === 'function') ? cb(null, false) : false);
 			}.bind(this));
@@ -171,7 +169,7 @@ var WorkshopModule = (function () {
 	}
 })();
 
-//Define some Framework Stuff
+// Define some Framework Stuff
 const lti = require('ims-lti');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -187,21 +185,21 @@ if (!config.inDebug) {
 	console.log = function(){};
 }
 
-//Middleware to parse body
+// Middleware to parse body
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
 
-//Middleware to parse Cookies
+// Middleware to parse Cookies
 app.use(cookieParser());
 
-//Register Server on Port
+// Register Server on Port
 app.listen(config.srv_port, config.srv_ip, function(){
 	console.log('Server running at http://'+config.srv_ip+':'+config.srv_port);
 });
 
-//Set CORS Definition here
+// Set CORS Definition here
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,DELETE');
@@ -211,47 +209,9 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
-//Middleware to check if user has already an existing container. If not proceed else redirect to exiting container.
-/*app.use(function(req, res, next){
-	WorkshopModule.checkExistingContainer(req, res, function(err, exists) {
-		if(!exists) next();
-	});
-});*/
-
-//Define Routing for the Websecurity Levels
-/*app.get('/container/create/:level_id/active_id/:active_id/uid/:uid', function(req, res){
-	WorkshopModule.checkValidSid(req.params.uid, function(err, isvalid) {
-		console.log("valid uid: " + isvalid);
-		if(isvalid) {
-			WorkshopModule.createDockerContainer(req.params.level_id, req.params.active_id, req.params.uid, res);
-		} else {
-			return res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
-		}
-	});
-});*/
-
-/*//Methde to create Level from ILIAS
+// Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
-	if(req.body && req.body.level && req.body.aid && req.body.uid){
-		WorkshopModule.checkValidSid(req.body.uid, function(err, isvalid){
-			if(isvalid) {
-				WorkshopModule.checkExistingContainer(req.body.uid, res, function(error, exists){
-					if(!exists){
-						WorkshopModule.createDockerContainer(req.body.level, req.body.aid, req.body.uid, function(err, docker_hash){
-							if(docker_hash) res.status(200).send({success:true, hash:docker_hash});
-							else res.status(200).send({success:true, error : 'docker creation failed'});
-						});
-					} else res.status(200).send({success:true, hash:exists});
-				})
-			}
-			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
-		})
-	}
-});*/
-
-app.post('/container/create', function(req, res){
-	console.log("POST /beta/container/create called");
 	provider.valid_request(req, function(err, is_valid){
 		// Check if the request is valid and if the outcomes service exists.
 		if (!is_valid || !provider.outcome_service){
@@ -274,10 +234,6 @@ app.post('/container/create', function(req, res){
 	});
 });
 
-/*app.get('/container/:docker_hash/redirect', function(req, res){
-	WorkshopModule.redirectToPort(req.params.docker_hash, res);
-});*/
-
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
@@ -298,12 +254,13 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
                     res.status(404).send({success:false, error: 'container not found!'});
                 }
             } else {
-                res.status(500).send({success:false, error: 'secret does not exist.'});
+                res.status(401).send({success:false, error: 'Wrong secret!'});
             }
         })
 	});
 });
 
+// Set Secret from Container
 app.post('/container/secret', function(req, res){
     console.log("POST /container/secret called");
 	if(req.body && req.body.dc_auth && req.body.secret){
@@ -319,27 +276,33 @@ app.post('/container/secret', function(req, res){
     }
 });
 
-//Define Routing for Container Flush
-app.delete('/container/:docker_hash/end', function(req, res){
+// Define Routing for Container Flush
+app.delete('/container/:docker_hash/end/secret/:secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-		if(citem){
-			WorkshopModule.destroyContainer(req.params.docker_hash);
-			res.status(200).send({success:true, return_url: citem.return_url});
-		} else {
-			res.status(404).send({success:false, error: 'container not found!'});
-		}
-		res.end();
+		WorkshopModule.checkSecretExists(req.params.dc_secret, function(err, secret_exists){
+			if(secret_exists) {
+				if (citem) {
+					WorkshopModule.destroyContainer(req.params.docker_hash);
+					res.status(200).send({success: true, return_url: citem.return_url});
+				} else {
+					res.status(404).send({success: false, error: 'container not found!'});
+				}
+				res.end();
+			} else {
+				res.status(401).send({success:false, error: 'Wrong secret!'});
+			}
+		});
 	});
 });
 
-//Default Catch for wrong URLs sends 404
+// Default Catch for wrong URLs sends 404
 app.get('*', function(req, res){
 	res.status(404).send({success:false, error:"Ressource not found!"});
 	res.end();
 });
 
 
-//Define Levels
+// Define Levels
 WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02'));

@@ -21,11 +21,14 @@ echo "</script>";
 		    success: function(result) {
 			    console.log(result);
 			    $.ajax({
-                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
+                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/secret/' + dc_secret,
                 	type: 'DELETE',
                 	success: function(result) {
-            		    window.close();
-                	}
+                        window.location = result.return_url + "&lti_msg=Lernziel erreicht!";
+                    },
+                    error: function(){
+                        alert("Error Occured! Please Try again.");
+                    }
             	});
 		    }
 	    });
