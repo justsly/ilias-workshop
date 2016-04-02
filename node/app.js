@@ -324,7 +324,7 @@ app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if(citem){
 			WorkshopModule.destroyContainer(req.params.docker_hash);
-			res.status(200).send({success:true});
+			res.status(200).send({success:true, return_url: citem.return_url});
 		} else {
 			res.status(404).send({success:false, error: 'container not found!'});
 		}
