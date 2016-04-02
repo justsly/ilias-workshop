@@ -8,12 +8,9 @@ var WorkshopModule = (function () {
 	var secret_list = [];
 
 	return {
-		Level: function (lkey, lvalue, qid, answer, points) {
+		Level: function (lkey, lvalue) {
 			this.lkey = lkey;
 			this.lvalue = lvalue;
-			this.qid = qid;
-			this.answer = answer;
-			this.points = points;
 		},
 		addNewLevel : function (litem){
 			level_list.push(litem);
@@ -47,10 +44,12 @@ var WorkshopModule = (function () {
             return false;
         },
 		//Define object DockerContainer
-		DockerContainer: function (docker_h, docker_p, active_id, uid, lid) {
+		DockerContainer: function (docker_h, docker_p, source_id, service_url, return_url, uid, lid) {
 			this.docker_hash = docker_h;
 			this.docker_port = docker_p;
-			this.active_id = active_id;
+			this.source_id = source_id;
+			this.service_url = service_url;
+			this.return_url = return_url;
 			this.uid = uid;
 			this.lid = lid;
 		},
@@ -90,7 +89,7 @@ var WorkshopModule = (function () {
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
 		//Create DockerContainer and redirect User to this Instance
-		createDockerContainer: function (lid, active_id, uid, cb) {
+		createDockerContainer: function (lid, source_id, service_url, return_url, uid, cb) {
 			WorkshopModule.getLevelById(lid, function(err, litem) {
 				if(litem) {
 					console.log('level exists: ' + litem.lvalue);
@@ -101,7 +100,7 @@ var WorkshopModule = (function () {
 							exec('docker port ' + docker_hash, function (error, stdout) {
 								if (!error) {
 									var docker_port = stdout.match(/\:\d+/)[0];
-									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, active_id, uid, lid), function(err, dc){
+									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, source_id, service_url, return_url, uid, lid), function(err, dc){
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
 										return ((typeof(cb) === 'function') ? cb(null, dc.docker_hash) : dc.docker_hash);
 									});
@@ -152,41 +151,27 @@ var WorkshopModule = (function () {
 				}
 			});
 		},
-        //SOAP Call to check if uid is valid in ILIAS
-        checkValidSid : function (uid, cb) {
-			var args = {sid: uid + '::' + config.client_id};
-			soap.createClient(config.wsdl_url, function(err, client) {
-				client.getUserIdBySid(args, function(err, result) {
-					if(result.usr_id){
-						return ((typeof(cb) === 'function') ? cb(null, true) : true);
-					} else {
-						return ((typeof(cb) === 'function') ? cb(null, false) : false);
-					}
-				});
-			}.bind(this));
-        },
-		sendSolutionToILIAS : function (answer, uid, aid, qid, points, cb) {
-			console.log("try to send answer: " + answer);
-			var sol = "<values><value>" + answer + "</value><value></value><points>" + points + "</points></values>";
-			var args = {sid: uid + "::" + config.client_id, active_id: aid, question_id: qid, pass: 0, solution: sol};
-			soap.createClient(config.wsdl_url, function(err, client) {
-				client.saveQuestionSolution(args, function(err, result) {
-					console.log("save log: " + result);
-					if(result.html) {
-						console.log("answer send ok");
-						return ((typeof(cb) === 'function') ? cb(null, true) : true);
-					} else {
-						console.log("answer send not ok");
-						return ((typeof(cb) === 'function') ? cb(null, false) : false);
-					}
-				})
+		sendSolutionToILIAS : function (service_url, source_id, cb) {
+			var req = {
+				method: 'POST',
+				body: {
+					ext_outcome_data_values_accepted: 'text,url',
+					lis_outcome_service_url: service_url,
+					lis_result_sourcedid: source_id,
+					lti_message_type: "basic-lti-launch-request",
+					lti_version: "LTI-1p0"
+				}
+			};
+			provider.outcome_service.send_replace_result(1., function(err, result){
+				console.log("Result send to ILIAS: " + result); // True or false
+				if(result) return ((typeof(cb) === 'function') ? cb(null, true) : true);
+				else return ((typeof(cb) === 'function') ? cb(null, false) : false);
 			}.bind(this));
 		}
 	}
 })();
 
 //Define some Framework Stuff
-const soap = require('soap');
 const lti = require('ims-lti');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -245,7 +230,7 @@ app.use(allowCrossDomain);
 	});
 });*/
 
-//Methde to create Level from ILIAS
+/*//Methde to create Level from ILIAS
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
 	if(req.body && req.body.level && req.body.aid && req.body.uid){
@@ -263,22 +248,22 @@ app.post('/container/create', function(req, res){
 			else res.status(401).send({success: false, error: 'denying docker creation because of missing sid / level'});
 		})
 	}
-});
+});*/
 
-app.post('/beta/container/create', function(req, res){
+app.post('/container/create', function(req, res){
 	console.log("POST /beta/container/create called");
 	provider.valid_request(req, function(err, is_valid){
 		// Check if the request is valid and if the outcomes service exists.
 		if (!is_valid || !provider.outcome_service){
-			res.status(401).send({success:false, error: 'unauthorized'});
+			res.status(401).send({success:false, error: 'Unauthorized. Please navigate from ILIAS.'});
 			console.log('wrong oauth');
 		} else {
 			console.log('oauth correct');
-			if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url){
+			if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url && req.body.lis_outcome_service_url && req.body.launch_presentation_return_url){
 				console.log(req.body.lis_result_sourcedid);
 				WorkshopModule.checkExistingContainer(req.body.user_id, res, function(error, exists){
 					if(!exists){
-						WorkshopModule.createDockerContainer(req.body.level, 1, req.body.user_id, function(err, docker_hash){
+						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.user_id, function(err, docker_hash){
 							if(docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
 							else res.status(500).send({success:false, error : 'docker creation failed'});
 						});
@@ -289,9 +274,9 @@ app.post('/beta/container/create', function(req, res){
 	});
 });
 
-app.get('/container/:docker_hash/redirect', function(req, res){
+/*app.get('/container/:docker_hash/redirect', function(req, res){
 	WorkshopModule.redirectToPort(req.params.docker_hash, res);
-});
+});*/
 
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
@@ -300,9 +285,9 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
             if(secret_exists){
                 if(citem){
                     WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-                        WorkshopModule.sendSolutionToILIAS(litem.answer, citem.uid, citem.active_id, litem.qid, litem.points, function(err, result) {
+                        WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, function(err, result) {
                             if(result) {
-                                res.status(200).send({success:true, message: 'User: ' + citem.active_id + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
+                                res.status(200).send({success:true, message: 'User: ' + citem.uid + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
                                 WorkshopModule.removeSecret(req.params.dc_secret);
                             } else {
                                 res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
@@ -355,7 +340,7 @@ app.get('*', function(req, res){
 
 
 //Define Levels
-WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01', 2, '2e78cabf229b96c729960d05b7bac509', 5));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01', 4, '753d6de95f47825797dd74a04fe678e1', 5));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02', 2, '6465b38b525937d2ef8177e04dcb2eb2', 10));
-WorkshopModule.addNewLevel(new WorkshopModule.Level('blind_sqli', 'ilias_sqli03', 6, 'dc9bb71adee86f6624de86061dcb34d1', 15));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01'));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01'));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02'));
+WorkshopModule.addNewLevel(new WorkshopModule.Level('blind_sqli', 'ilias_sqli03'));
