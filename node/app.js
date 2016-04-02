@@ -187,11 +187,14 @@ var WorkshopModule = (function () {
 
 //Define some Framework Stuff
 const soap = require('soap');
+const lti = require('ims-lti');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const app = express();
+
+var provider = new lti.Provider(config.consumer_key, config.consumer_secret);
 
 // destroy console.log in live mode
 if (!config.inDebug) {
@@ -264,16 +267,26 @@ app.post('/container/create', function(req, res){
 
 app.post('/beta/container/create', function(req, res){
 	console.log("POST /beta/container/create called");
-	if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url){
-		WorkshopModule.checkExistingContainer(req.body.user_id, res, function(error, exists){
-			if(!exists){
-				WorkshopModule.createDockerContainer(req.body.level, 1, req.body.user_id, function(err, docker_hash){
-					if(docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
-					else res.status(500).send({success:false, error : 'docker creation failed'});
+	provider.valid_request(req, function(err, is_valid){
+		// Check if the request is valid and if the outcomes service exists.
+		if (!is_valid || !provider.outcome_service){
+			res.status(401).send({success:false, error: 'unauthorized'});
+			console.log('wrong oauth');
+		} else {
+			console.log('oauth correct');
+			if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url){
+				console.log(req.body.lis_result_sourcedid);
+				WorkshopModule.checkExistingContainer(req.body.user_id, res, function(error, exists){
+					if(!exists){
+						WorkshopModule.createDockerContainer(req.body.level, 1, req.body.user_id, function(err, docker_hash){
+							if(docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
+							else res.status(500).send({success:false, error : 'docker creation failed'});
+						});
+					} else WorkshopModule.redirectToPort(docker_hash, res);
 				});
-			} else WorkshopModule.redirectToPort(docker_hash, res);
-		});
-	}
+			}
+		}
+	});
 });
 
 app.get('/container/:docker_hash/redirect', function(req, res){

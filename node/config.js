@@ -17,4 +17,8 @@ config.client_id = "ilias";
 //Switch Debug mode on or off
 config.inDebug = true;
 
+//Define OAuth Credentials
+config.consumer_key = '12345';
+config.consumer_secret = 'secret';
+
 module.exports = config;
