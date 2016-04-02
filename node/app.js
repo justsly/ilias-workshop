@@ -44,12 +44,13 @@ var WorkshopModule = (function () {
             return false;
         },
 		//Define object DockerContainer
-		DockerContainer: function (docker_h, docker_p, source_id, service_url, return_url, uid, lid) {
+		DockerContainer: function (docker_h, docker_p, source_id, service_url, return_url, consumer_key, uid, lid) {
 			this.docker_hash = docker_h;
 			this.docker_port = docker_p;
 			this.source_id = source_id;
 			this.service_url = service_url;
 			this.return_url = return_url;
+			this.consumer_key = consumer_key;
 			this.uid = uid;
 			this.lid = lid;
 		},
@@ -89,7 +90,7 @@ var WorkshopModule = (function () {
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
 		//Create DockerContainer and redirect User to this Instance
-		createDockerContainer: function (lid, source_id, service_url, return_url, uid, cb) {
+		createDockerContainer: function (lid, source_id, service_url, return_url, consumer_key, uid, cb) {
 			WorkshopModule.getLevelById(lid, function(err, litem) {
 				if(litem) {
 					console.log('level exists: ' + litem.lvalue);
@@ -100,7 +101,7 @@ var WorkshopModule = (function () {
 							exec('docker port ' + docker_hash, function (error, stdout) {
 								if (!error) {
 									var docker_port = stdout.match(/\:\d+/)[0];
-									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, source_id, service_url, return_url, uid, lid), function(err, dc){
+									WorkshopModule.addNewContainer(new WorkshopModule.DockerContainer(docker_hash, docker_port, source_id, service_url, return_url, consumer_key, uid, lid), function(err, dc){
 										WorkshopModule.setContainerTimeout(dc.docker_hash);
 										return ((typeof(cb) === 'function') ? cb(null, dc.docker_hash) : dc.docker_hash);
 									});
@@ -149,7 +150,8 @@ var WorkshopModule = (function () {
 				}
 			});
 		},
-		sendSolutionToILIAS : function (service_url, source_id, cb) {
+		sendSolutionToILIAS : function (service_url, source_id, consumer_key, cb) {
+			var provider = new lti.Provider(consumer_key, config.consumer_secret);
 			var req = {
 				method: 'POST',
 				body: {
@@ -176,8 +178,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const app = express();
-
-var provider = new lti.Provider(config.consumer_key, config.consumer_secret);
 
 // destroy console.log in live mode
 if (!config.inDebug) {
@@ -212,26 +212,27 @@ app.use(allowCrossDomain);
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
-	provider.valid_request(req, function(err, is_valid){
-		// Check if the request is valid and if the outcomes service exists.
-		if (!is_valid || !provider.outcome_service){
-			res.status(401).send({success:false, error: 'Unauthorized. Please navigate from ILIAS.'});
-			console.log('wrong oauth');
-		} else {
-			console.log('oauth correct');
-			if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url && req.body.lis_outcome_service_url && req.body.launch_presentation_return_url){
+	if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url && req.body.lis_outcome_service_url && req.body.launch_presentation_return_url && req.body.oauth_consumer_key) {
+		var provider = new lti.Provider(req.body.oauth_consumer_key, config.consumer_secret);
+		provider.valid_request(req, function (err, is_valid) {
+			// Check if the request is valid and if the outcomes service exists.
+			if (!is_valid || !provider.outcome_service) {
+				res.status(401).send({success: false, error: 'Unauthorized. Please navigate from ILIAS.'});
+				console.log('wrong oauth');
+			} else {
+				console.log('oauth correct');
 				console.log(req.body.lis_result_sourcedid);
-				WorkshopModule.checkExistingContainer(req.body.user_id, res, function(error, exists){
-					if(!exists){
-						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.user_id, function(err, docker_hash){
-							if(docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
-							else res.status(500).send({success:false, error : 'docker creation failed'});
+				WorkshopModule.checkExistingContainer(req.body.user_id, res, function (error, exists) {
+					if (!exists) {
+						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.oauth_consumer_key, req.body.user_id, function (err, docker_hash) {
+							if (docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
+							else res.status(500).send({success: false, error: 'docker creation failed'});
 						});
 					} else WorkshopModule.redirectToPort(docker_hash, res);
 				});
 			}
-		}
-	});
+		});
+	}
 });
 
 // Return to ILIAS with complete flag
@@ -241,7 +242,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
             if(secret_exists){
                 if(citem){
                     WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-                        WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, function(err, result) {
+                        WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
                             if(result) {
                                 res.status(200).send({success:true, message: 'User: ' + citem.uid + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
                                 WorkshopModule.removeSecret(req.params.dc_secret);

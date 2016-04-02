@@ -18,7 +18,6 @@ config.client_id = "ilias";
 config.inDebug = true;
 
 //Define OAuth Credentials
-config.consumer_key = 'Jr2v6xNhbckksw';
 config.consumer_secret = 'Xospnzq6v2Uror';
 
 module.exports = config;
