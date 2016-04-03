@@ -164,6 +164,9 @@ var WorkshopModule = (function () {
 					lti_version: "LTI-1p0"
 				}
 			};
+			provider.valid_request(req, function (err, is_valid) {
+				if (!is_valid || !provider.outcome_service) return false;
+			});
 			provider.outcome_service.send_replace_result(1., function(err, result){
 				console.log("Result send to ILIAS: " + result);
 				if(result) return ((typeof(cb) === 'function') ? cb(null, true) : true);
