@@ -79,11 +79,11 @@ var WorkshopModule = (function () {
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
 		},
 		//Returns DockerContainer object from list if matches given uid
-		findContainerByUid: function (uid, cb){
+		findContainerByUid: function (uid, lid, cb){
 			console.log("try to find: " + uid);
 			for (var i = 0; i < container_list.length; i++) {
-				if (container_list[i].uid === uid) {
-					console.log("found " + uid);
+				if (container_list[i].uid === uid && container_list[i].lid === lid) {
+					console.log("found " + uid + " at Level " + lid);
 					return ((typeof(cb) === 'function') ? cb(null, container_list[i]) : container_list[i]);
 				}
 			}
@@ -129,8 +129,8 @@ var WorkshopModule = (function () {
 			exec(cmd);
 			WorkshopModule.removeContainerByHash(docker_hash);
 		},
-		checkExistingContainer: function (uid, res, cb) {
-			WorkshopModule.findContainerByUid(uid, function(err, citem) {
+		checkExistingContainer: function (uid, lid, res, cb) {
+			WorkshopModule.findContainerByUid(uid, lid, function(err, citem) {
 				if (citem) {
 					return ((typeof(cb) === 'function') ? cb(null, citem) : citem);
 				} else {
@@ -229,8 +229,8 @@ app.post('/container/create', function(req, res){
 			} else {
 				console.log('oauth correct');
 				console.log(req.body.lis_result_sourcedid);
-				WorkshopModule.checkExistingContainer(req.body.user_id, res, function (error, exists) {
-					if (!exists || exists.lid != req.body.level) {
+				WorkshopModule.checkExistingContainer(req.body.user_id, req.body.level, res, function (error, exists) {
+					if (!exists) {
 						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.oauth_consumer_key, req.body.user_id, function (err, docker_hash) {
 							if (docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
 							else res.status(500).send({success: false, error: 'docker creation failed'});
