@@ -5,7 +5,8 @@ var config = {};
 config.wsdl_url = "http://localhost/ilias/webservice/soap/server.php?wsdl";
 
 // Define Server IP and Port
-config.srv_ip = '81.7.10.250';
+config.listen_ip = '81.7.10.250';
+config.redirect_ip = '81.7.10.250';
 config.srv_port = 8080;
 
 //Auth Key to send Container Secret to REST Router

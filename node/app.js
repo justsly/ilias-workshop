@@ -122,7 +122,7 @@ var WorkshopModule = (function () {
 			setTimeout(function () {
 				console.log("Timeout for hash: " +docker_hash + " reached");
 				WorkshopModule.destroyContainer(docker_hash);
-			}, 1800000);
+			}, 3600000);
 		},
 		destroyContainer: function (docker_hash) {
 			var cmd = 'docker stop ' + docker_hash + '&& docker rm ' + docker_hash;
@@ -132,7 +132,7 @@ var WorkshopModule = (function () {
 		checkExistingContainer: function (uid, res, cb) {
 			WorkshopModule.findContainerByUid(uid, function(err, citem) {
 				if (citem) {
-					return ((typeof(cb) === 'function') ? cb(null, citem.docker_hash) : citem.docker_hash);
+					return ((typeof(cb) === 'function') ? cb(null, citem) : citem);
 				} else {
 					return ((typeof(cb) === 'function') ? cb(null, false) : false);
 				}
@@ -142,7 +142,7 @@ var WorkshopModule = (function () {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
 					res.writeHead(302, {
-						'Location': 'http://' + config.srv_ip + '' + citem.docker_port,
+						'Location': 'http://' + config.redirect_ip + '' + citem.docker_port,
 						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
 					});
 					res.end();
@@ -201,8 +201,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Register Server on Port
-app.listen(config.srv_port, config.srv_ip, function(){
-	console.log('Server running at http://'+config.srv_ip+':'+config.srv_port);
+app.listen(config.srv_port, config.listen_ip, function(){
+	console.log('Server running at http://'+config.listen_ip+':'+config.srv_port);
 });
 
 // Set CORS Definition here
@@ -230,12 +230,12 @@ app.post('/container/create', function(req, res){
 				console.log('oauth correct');
 				console.log(req.body.lis_result_sourcedid);
 				WorkshopModule.checkExistingContainer(req.body.user_id, res, function (error, exists) {
-					if (!exists) {
+					if (!exists || exists.lid != req.body.level) {
 						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.oauth_consumer_key, req.body.user_id, function (err, docker_hash) {
 							if (docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
 							else res.status(500).send({success: false, error: 'docker creation failed'});
 						});
-					} else WorkshopModule.redirectToPort(docker_hash, res);
+					} else WorkshopModule.redirectToPort(exists.docker_hash, res);
 				});
 			}
 		});
@@ -248,16 +248,14 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
         WorkshopModule.checkSecretExists(req.params.dc_secret, function(err, secret_exists){
             if(secret_exists){
                 if(citem){
-                    WorkshopModule.getLevelById(citem.lid, function(err, litem) {
-                        WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
-                            if(result) {
-                                res.status(200).send({success:true, message: 'User: ' + citem.uid + 'hat das Level: ' + litem.lvalue + ' erfolgreich beendet!'});
-                                WorkshopModule.removeSecret(req.params.dc_secret);
-                            } else {
-                                res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
-                            }
+					WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
+						if(result) {
+							res.status(200).send({success:true, message: 'Mission solved.'});
+							WorkshopModule.removeSecret(req.params.dc_secret);
+						} else {
+							res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
+						}
                         });
-                    });
                 } else {
                     res.status(404).send({success:false, error: 'container not found!'});
                 }
