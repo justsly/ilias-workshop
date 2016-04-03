@@ -285,21 +285,15 @@ app.post('/container/secret', function(req, res){
 });
 
 // Define Routing for Container Flush
-app.delete('/container/:docker_hash/end/secret/:secret', function(req, res){
+app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-		WorkshopModule.checkSecretExists(req.params.dc_secret, function(err, secret_exists){
-			if(secret_exists) {
-				if (citem) {
-					WorkshopModule.destroyContainer(req.params.docker_hash);
-					res.status(200).send({success: true, return_url: citem.return_url});
-				} else {
-					res.status(404).send({success: false, error: 'container not found!'});
-				}
-				res.end();
-			} else {
-				res.status(401).send({success:false, error: 'Wrong secret!'});
-			}
-		});
+		if (citem) {
+			WorkshopModule.destroyContainer(req.params.docker_hash);
+			res.status(200).send({success: true, return_url: citem.return_url});
+		} else {
+			res.status(404).send({success: false, error: 'container not found!'});
+		}
+		res.end();
 	});
 });
 

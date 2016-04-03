@@ -32,7 +32,7 @@ echo "</script>";
 		    success: function(result) {
 			    console.log(result);
 			    $.ajax({
-                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/secret/' + dc_secret,
+                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
                 	type: 'DELETE',
                 	success: function(result) {
             		    window.location = result.return_url + "&lti_msg=Lernziel erreicht!";
