@@ -53,23 +53,21 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
 		<?php
 		 if(isset($search) && $search != ""){
 		    echo "Sie haben nach ".$search." gesucht!";
+		    echo "<br />";
 		    while ($stmt->fetch()) {
-                printf ("%s\n", $datarows);
+                printf ("%s", $datarows);
+                echo "<br />";
             }
 		 	$stmt -> close();
 			if (preg_match($suchmuster, $search)) include('./xss_infos.php');
 		 }
 		 else {
-			if(isset($search)){
-				echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
-                while ($stmt2->fetch()) {
-                    printf ("%s\n", $datarows2);
-                }
-                $stmt2 -> close();
-			}
-			else{
-		 		echo "<p class='text-info'>Hier kannst du die Seite durchsuchen.</p>";
-			}
+			echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
+            while ($stmt2->fetch()) {
+                printf ("%s", $datarows2);
+                echo "<br />";
+            }
+            $stmt2 -> close();
 		 }
 		?>
 	    <form class="well form-horizontal" method="get">
