@@ -17,7 +17,7 @@ if($result = $db->query($sql)){
         $result->data_seek(0);
         $datarow = $result->fetch_array();
 } else {
-        echo $db->errorInfo()[2];
+        echo $result->errorInfo()[2];
 }
 }
 
