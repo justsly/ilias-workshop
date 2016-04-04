@@ -41,7 +41,7 @@ if($result = $db->query($sql)){
       </div>
     </div>
     <div class="container">
-    	<h3>SQL Injection 3</h3>
+    	<h3>SQL Injection 2</h3>
 		<div class="navbar navbar-inverse">
 			<div class="navbar-inner">
 				<div class="container">
