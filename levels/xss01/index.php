@@ -49,7 +49,7 @@ if($result2 = $db->query($sql2)){
 		    echo "Sie haben nach ".$search." gesucht!";
 		 	if(isset($rows)){ 
 				if($rows >= 1){
-		 			echo "<p>".$rows[0]."</p>;
+		 			echo "<p>".$rows[0]."</p>";
 		 			$result->free();
 		 		}
 			else{
@@ -61,7 +61,7 @@ if($result2 = $db->query($sql2)){
 				echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
 				if(isset($rows)){
                 	if($rows >= 1){
-                		 echo "<p>".$rows2[0]."</p>;
+                		 echo "<p>".$rows2[0]."</p>";
                 		 $result2->free();
                 	}
                 }
