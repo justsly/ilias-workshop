@@ -6,27 +6,28 @@ if($db->connect_errno > 0){
 	die("Connection failed: ".$db->connect_error);
 }
 if(isset($search) && $search != ""){
-    $sql = <<<SQL
-    SELECT inhalt
-    FROM posts
-    WHERE inhalt LIKE '%?%'
-    SQL;
+$db_search = "%".$search."%";
+$sql = <<<SQL
+SELECT inhalt
+FROM posts
+WHERE inhalt LIKE ?
+SQL;
     if($stmt = $db->prepare($sql)){
-	    $stmt -> bind_param("s", $search);
+	    $stmt -> bind_param("s", $db_search);
 	    $stmt -> execute();
 	    $stmt -> bind_result($datarows);
     }
 } else {
-    $sql = <<<SQL
-    SELECT inhalt
-    FROM posts
-    SQL;
+$sql = <<<SQL
+SELECT inhalt
+FROM posts
+SQL;
     if($stmt = $db->prepare($sql)){
 	    $stmt -> execute();
 	    $stmt -> bind_result($datarows);
     }
 }
-$suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
+$suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)<\/script>.*/';
 ?>
 <!DOCTYPE html>
 <html lang="de">
