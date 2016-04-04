@@ -9,17 +9,20 @@ if($db->connect_errno > 0){
 $sql = <<<SQL
 SELECT inhalt
 FROM posts
-WHERE inhalt LIKE '$search'
+WHERE inhalt LIKE '%?%'
 SQL;
-if($result = $db->query($sql)){
-	$rows = $result->num_rows;
+if($stmt = $db->prepare($sql)){
+	$stmt -> bind_param("s", $search);
+	$stmt -> execute();
+	$stmt -> bind_result($datarows);
 }
 $sql2 = <<<SQL
 SELECT inhalt
 FROM posts
 SQL;
-if($result2 = $db->query($sql2)){
-    $rows2 = $result2->num_rows;
+if($stmt2 = $db->prepare($sql2)){
+	$stmt2 -> execute();
+	$stmt2 -> bind_result($datarows2);
 }
 }
 
@@ -50,34 +53,19 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
 		<?php
 		 if(isset($search) && $search != ""){
 		    echo "Sie haben nach ".$search." gesucht!";
-		 	if(isset($rows)){ 
-				if($rows >= 1){
-		 			while($row = $result->fetch_array())
-                    {
-                        echo $row[2];
-                        echo "<br />";
-                    }
-		 			$result->free();
-		 		}
-		 	}
-			else{
-				echo "<p class='text-warning'>Keine Treffer zum gewünschten Begriff gefunden.</p>";
-			}
-			if (preg_match($suchmuster, $search)) include('./admin_infos.php');
+		    while ($stmt->fetch()) {
+                printf ("%s\n", $datarows);
+            }
+		 	$stmt -> close();
+			if (preg_match($suchmuster, $search)) include('./xss_infos.php');
 		 }
 		 else {
 			if(isset($search)){
 				echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
-				if(isset($rows)){
-                	if($rows2 >= 1){
-                		 while($row2 = $result2->fetch_array())
-                         {
-                            echo $row2[2];
-                            echo "<br />";
-                         }
-                		 $result2->free();
-                	}
+                while ($stmt2->fetch()) {
+                    printf ("%s\n", $datarows2);
                 }
+                $stmt2 -> close();
 			}
 			else{
 		 		echo "<p class='text-info'>Hier kannst du die Seite durchsuchen.</p>";
@@ -91,13 +79,15 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
 	    <input type="text" name="search"/>
 	    </div></div>
 	    <button type="submit" class="btn" value="clicked">suchen</button>
-	    </div></div>
 	    </form>
 	    <p>
 		<small>
 		    Kann die Suchfunktion manipuliert werden?
 		</small>
 	    </p>
+	    <?php
+            if(isset($db)) $db->close();
+        ?>
     </div>
   </body>
 </html>

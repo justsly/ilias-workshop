@@ -17,7 +17,7 @@ ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD xss01/index.php /var/www/html/index.php
 ADD sqli/dbconnect.php /var/www/html/dbconnect.php
-ADD sqli/admin_infos.php /var/www/html/admin_infos.php
+ADD xss01/xss_infos.php /var/www/html/xss_infos.php
 ADD config.php /var/www/html/config.php
 ADD xss01/setup.sh /root/setup.sh
 ADD secret_generator.sh /root/secret_generator.sh
