@@ -303,6 +303,7 @@ app.get('*', function(req, res){
 
 
 // Define Levels
+WorkshopModule.addNewLevel(new WorkshopModule.Level('lfi', 'ilias_lfi01'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('ping', 'ilias_cmdi01'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('simple_login', 'ilias_sqli01'));
 WorkshopModule.addNewLevel(new WorkshopModule.Level('error_based_sqli', 'ilias_sqli02'));
