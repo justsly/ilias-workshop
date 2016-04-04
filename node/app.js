@@ -3,8 +3,9 @@ const lti = require('ims-lti');
 const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config.js');
-const WorkshopModule = require('./modules/WorkshopModule.js');
 const app = express();
+
+const WorkshopModule = require('./modules/WorkshopModule.js');
 
 
 // destroy console.log in live mode, total silence
