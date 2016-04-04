@@ -51,21 +51,24 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)<\/script>.*/';
     	<h3>Reflected Cross-Site-Scripting</h3>
 		<?php
 		 if(isset($search) && $search != ""){
-		    echo "Sie haben nach ".$search." gesucht!";
-		    echo "<br />";
+		    echo "<p>Sie haben nach <b>".$search."</b> gesucht!</p>";
+		    echo "<pre>";
 		    while ($stmt->fetch()) {
                 printf ("%s", $datarows);
                 echo "<br />";
             }
+            echo "</pre>";
 		 	$stmt -> close();
 			if (preg_match($suchmuster, $search)) include('./xss_infos.php');
 		 }
 		 else {
 			echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
+			echo "<pre>";
             while ($stmt->fetch()) {
                 printf ("%s", $datarows);
                 echo "<br />";
             }
+            echo "</pre>";
             $stmt -> close();
 		 }
 		?>
