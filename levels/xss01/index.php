@@ -1,29 +1,30 @@
 <?php
 include("./dbconnect.php");
 if(isset($_GET['search'])) $search=$_GET['search'];
-if(isset($search) && $search != ""){
 $db = new mysqli($servername,$dbuser,$dbpassword,'sqli');
 if($db->connect_errno > 0){
 	die("Connection failed: ".$db->connect_error);
 }
-$sql = <<<SQL
-SELECT inhalt
-FROM posts
-WHERE inhalt LIKE '%?%'
-SQL;
-if($stmt = $db->prepare($sql)){
-	$stmt -> bind_param("s", $search);
-	$stmt -> execute();
-	$stmt -> bind_result($datarows);
-}
-$sql2 = <<<SQL
-SELECT inhalt
-FROM posts
-SQL;
-if($stmt2 = $db->prepare($sql2)){
-	$stmt2 -> execute();
-	$stmt2 -> bind_result($datarows2);
-}
+if(isset($search) && $search != ""){
+    $sql = <<<SQL
+    SELECT inhalt
+    FROM posts
+    WHERE inhalt LIKE '%?%'
+    SQL;
+    if($stmt = $db->prepare($sql)){
+	    $stmt -> bind_param("s", $search);
+	    $stmt -> execute();
+	    $stmt -> bind_result($datarows);
+    }
+} else {
+    $sql = <<<SQL
+    SELECT inhalt
+    FROM posts
+    SQL;
+    if($stmt = $db->prepare($sql)){
+	    $stmt -> execute();
+	    $stmt -> bind_result($datarows);
+    }
 }
 
 $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
@@ -62,13 +63,12 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
 			if (preg_match($suchmuster, $search)) include('./xss_infos.php');
 		 }
 		 else {
-		    $stmt -> close();
 			echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
-            while ($stmt2->fetch()) {
-                printf ("%s", $datarows2);
+            while ($stmt->fetch()) {
+                printf ("%s", $datarows);
                 echo "<br />";
             }
-            $stmt2 -> close();
+            $stmt -> close();
 		 }
 		?>
 	    <form class="well form-horizontal" method="get">
