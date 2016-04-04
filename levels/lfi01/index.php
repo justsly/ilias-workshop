@@ -45,7 +45,7 @@ if(isset($_GET['page'])){
 		</small>
 	    </p>
 
-	   <p class="text-warning">Sichere Includes durch anhängen von '.txt'. Wirklich sicher?</p>
+	   <p class="text-warning">Sichere Includes durch fest definierten Include Pfad. Wirklich sicher?</p>
     </div>
 
 
