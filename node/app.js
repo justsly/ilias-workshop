@@ -198,17 +198,12 @@ var WorkshopModule = (function () {
 		/**
 		 * Create DockerContainer and redirect user to this instance
 		 *
-		 * @param lid - levelid
-		 * @param source_id
-		 * @param service_url
-		 * @param return_url
-		 * @param consumer_key
-		 * @param uid - userid
-		 * @param cb
-		 */
-		createDockerContainer : function (lid, source_id, service_url, return_url, consumer_key, uid, cb) {
-			console.log("create Container with key: " +consumer_key);
-			WorkshopModule.getLevelById(lid, function(err, litem) {
+		 * @param dockSetup
+         * @param cb
+         */
+		createDockerContainer : function (dockSetup, cb) {
+			console.log("create Container with key: " + dockSetup.oauth_consumer_key);
+			WorkshopModule.getLevelById(dockSetup.level, function(err, litem) {
 				if (litem) {
 					console.log('level exists: ' + litem.lvalue);
 
@@ -224,12 +219,12 @@ var WorkshopModule = (function () {
 									var con = new WorkshopModule.DockerContainer(
 										docker_hash,
 										docker_port,
-										source_id,
-										service_url,
-										return_url,
-										consumer_key,
-										uid,
-										lid
+										dockSetup.result_sourcedid,
+										dockSetup.outcome_service_url,
+										dockSetup.launch_presentation_return_url,
+										dockSetup.oauth_consumer_key,
+										dockSetup.user_id,
+										dockSetup.level
 									);
 
 									WorkshopModule.addNewContainer(con, function(err, dc) {
@@ -430,13 +425,18 @@ app.post('/container/create', function(req, res){
 				console.log(req.body.lis_result_sourcedid);
 				WorkshopModule.checkExistingContainer(req.body.user_id, req.body.level, function (error, exists) {
 					if (!exists) {
+
+						var dockSetup = {
+							level: req.body.level,
+							result_sourcedid: req.body.lis_result_sourcedid,
+							outcome_service_url: req.body.lis_outcome_service_url,
+							launch_presentation_return_url: req.body.launch_presentation_return_url,
+							oauth_consumer_key: req.body.oauth_consumer_key,
+							user_id: req.body.user_id
+						};
+
 						WorkshopModule.createDockerContainer(
-							req.body.level,
-							req.body.lis_result_sourcedid,
-							req.body.lis_outcome_service_url,
-							req.body.launch_presentation_return_url,
-							req.body.oauth_consumer_key,
-							req.body.user_id,
+							dockSetup,
 							function (err, docker_hash) {
 								if (docker_hash)
 									WorkshopModule.redirectToPort(docker_hash, res);
