@@ -7,8 +7,7 @@ var WorkshopModule = (function () {
 	var _container_list = [];
 	var _level_list = [];
 	var _secret_list = [];
-
-	var config = require('../config');
+	
 
 	return {
 
