@@ -62,6 +62,7 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
 			if (preg_match($suchmuster, $search)) include('./xss_infos.php');
 		 }
 		 else {
+		    $stmt -> close();
 			echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
             while ($stmt2->fetch()) {
                 printf ("%s", $datarows2);
