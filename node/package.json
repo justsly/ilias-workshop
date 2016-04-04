@@ -1,0 +1,16 @@
+{
+  "name": "ilias-workshop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Bjoern Brixner",
+  "license": "SEE LICENSE IN <../readme.md>",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "ims-lti": "^3.0.2"
+  }
+}
