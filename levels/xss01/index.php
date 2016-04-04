@@ -27,7 +27,7 @@ SQL;
 	    $stmt -> bind_result($datarows);
     }
 }
-$suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)<\/script>.*/';
+$suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -77,8 +77,8 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)<\/script>.*/';
 	    <label class="control-label" for="search">Suchbegriff</label>
 	    <div class="controls">
 	    <input type="text" name="search"/>
-	    </div></div>
 	    <button type="submit" class="btn" value="clicked">suchen</button>
+	    </div></div>
 	    </form>
 	    <p>
 		<small>
