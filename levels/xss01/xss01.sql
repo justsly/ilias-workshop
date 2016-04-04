@@ -36,7 +36,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,'2016-04-28 18:35:24','Warum ist die Banane krum?'),(2,'2016-05-01 11:27:43','Haben Lügen tatsächlich kurze Beine?'),(3,'2016-05-03 09:48:17','Was kann diese Suchfunktion hier eigentlich?'),(4,'2016-05-07 19:18:34','Was ist eine XSS Schwachstelle? Kann man das essen?'),(5,'2016-04-28 14:22:11','Tolle Seite hier. Die Suche ist klasse!'));
+INSERT INTO `posts` VALUES (1,'2016-04-28 18:35:24','Warum ist die Banane krum?'),(2,'2016-05-01 11:27:43','Haben Lügen tatsächlich kurze Beine?'),(3,'2016-05-03 09:48:17','Was kann diese Suchfunktion hier eigentlich?'),(4,'2016-05-07 19:18:34','Was ist eine XSS Schwachstelle? Kann man das essen?'),(5,'2016-04-28 14:22:11','Tolle Seite hier. Die Suche ist klasse!');
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
