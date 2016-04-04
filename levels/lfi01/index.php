@@ -35,7 +35,7 @@ if(isset($_GET['page'])){
 		</div>		 
 	    <p><?php 
 		if(isset($page)){
-			include("./".$page);
+			include("./includes/".$page);
 		}
 		else echo "Wilkommen auf dieser genial programmierten Seite!";
 		?></p>
