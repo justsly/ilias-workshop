@@ -26,9 +26,7 @@ if(isset($search) && $search != ""){
 	    $stmt -> bind_result($datarows);
     }
 }
-
 $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
-
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -40,7 +38,6 @@ $suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
     <meta name="author" content="BB">
     <link href="css/style.css" rel="stylesheet">
   </head>
-
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
