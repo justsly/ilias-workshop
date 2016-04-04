@@ -17,7 +17,7 @@ if($result = $db->query($sql)){
         $result->data_seek(0);
         $datarow = $result->fetch_array();
 } else {
-        echo $db->error;
+        $errormsg = $db->error;
 }
 }
 
@@ -55,7 +55,8 @@ if($result = $db->query($sql)){
 		</div>		 
 	    <p><?php 
 		if(isset($id)){
-			echo $datarow[0];
+			if($datarow[0]) echo $datarow[0];
+			else echo $errormsg;
 		}
 		else echo "Wilkommen auf dieser genial programmierten Seite!";
 		?></p>
