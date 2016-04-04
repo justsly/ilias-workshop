@@ -49,6 +49,14 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
     </div>
     <div class="container">
     	<h3>Reflected Cross-Site-Scripting</h3>
+    	<form class="well form-horizontal" method="get">
+        	    <div class="control-group">
+        	    <label class="control-label" for="search">Suchbegriff</label>
+        	    <div class="controls">
+        	    <input type="text" name="search"/>
+        	    <button type="submit" class="btn" value="clicked">suchen</button>
+        	    </div></div>
+        </form>
 		<?php
 		 if(isset($search) && $search != ""){
 		    echo "<p>Sie haben nach <b>".$search."</b> gesucht!</p>";
@@ -72,14 +80,6 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
             $stmt -> close();
 		 }
 		?>
-	    <form class="well form-horizontal" method="get">
-	    <div class="control-group">
-	    <label class="control-label" for="search">Suchbegriff</label>
-	    <div class="controls">
-	    <input type="text" name="search"/>
-	    <button type="submit" class="btn" value="clicked">suchen</button>
-	    </div></div>
-	    </form>
 	    <p>
 		<small>
 		    Kann die Suchfunktion manipuliert werden?
