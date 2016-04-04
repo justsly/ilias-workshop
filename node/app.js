@@ -368,7 +368,7 @@ var WorkshopModule = (function () {
 // Define some Framework Stuff
 const lti = require('ims-lti');
 const express = require('express');
-const cookieParser = require('cookie-parser');
+//const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const app = express();
@@ -390,7 +390,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 // Middleware to parse Cookies
-app.use(cookieParser());
+//app.use(cookieParser());
 
 // Register Server on Port
 app.listen(config.srv_port, config.listen_ip, function(){
