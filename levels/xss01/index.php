@@ -22,6 +22,9 @@ if($result2 = $db->query($sql2)){
     $rows2 = $result2->num_rows;
 }
 }
+
+$suchmuster = '/<script[^>]*?>alert\([\s\S]+?\)<\/script>/';
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -49,20 +52,29 @@ if($result2 = $db->query($sql2)){
 		    echo "Sie haben nach ".$search." gesucht!";
 		 	if(isset($rows)){ 
 				if($rows >= 1){
-		 			echo "<p>".$rows[0]."</p>";
+		 			while($row = $result->fetch_array())
+                    {
+                        echo $row[2];
+                        echo "<br />";
+                    }
 		 			$result->free();
 		 		}
 		 	}
 			else{
 				echo "<p class='text-warning'>Keine Treffer zum gewünschten Begriff gefunden.</p>";
 			}
+			if (preg_match($suchmuster, $search)) include('./admin_infos.php');
 		 }
 		 else {
 			if(isset($search)){
 				echo "<p class='text-warning'>Bitte einen Suchbegriff eingeben.</p>";
 				if(isset($rows)){
-                	if($rows >= 1){
-                		 echo "<p>".$rows2[0]."</p>";
+                	if($rows2 >= 1){
+                		 while($row2 = $result2->fetch_array())
+                         {
+                            echo $row2[2];
+                            echo "<br />";
+                         }
                 		 $result2->free();
                 	}
                 }
