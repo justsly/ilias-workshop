@@ -17,6 +17,9 @@ ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD lfi01/index.php /var/www/html/index.php
 ADD lfi01/index.txt /var/www/html/index.txt
+ADD lfi01/page1.txt /var/www/html/page1.txt
+ADD lfi01/page2.txt /var/www/html/page2.txt
+ADD lfi01/page3.txt /var/www/html/page3.txt
 ADD lfi01/secret.php /var/www/html/secret.php
 ADD config.php /var/www/html/config.php
 ADD lfi01/setup.sh /root/setup.sh
