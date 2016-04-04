@@ -52,6 +52,7 @@ if($result2 = $db->query($sql2)){
 		 			echo "<p>".$rows[0]."</p>";
 		 			$result->free();
 		 		}
+		 	}
 			else{
 				echo "<p class='text-warning'>Keine Treffer zum gewünschten Begriff gefunden.</p>";
 			}
