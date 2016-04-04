@@ -7,7 +7,7 @@ var WorkshopModule = (function () {
 	var _container_list = [];
 	var _level_list = [];
 	var _secret_list = [];
-	
+
 
 	return {
 
@@ -108,8 +108,8 @@ var WorkshopModule = (function () {
 		 * @param service_url
 		 * @param return_url
 		 * @param consumer_key
-		 * @param uid
-		 * @param lid
+		 * @param uid - userid
+		 * @param lid - levelid
 		 * @constructor
 		 */
 		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, consumer_key, uid, lid) {
@@ -127,7 +127,7 @@ var WorkshopModule = (function () {
 		/**
 		 * Push new DockerContainer object to list
 		 *
-		 * @param dc
+		 * @param dc - docker container
 		 * @param cb
 		 * @returns {*}
 		 */
@@ -198,12 +198,12 @@ var WorkshopModule = (function () {
 		/**
 		 * Create DockerContainer and redirect user to this instance
 		 *
-		 * @param lid
+		 * @param lid - levelid
 		 * @param source_id
 		 * @param service_url
 		 * @param return_url
 		 * @param consumer_key
-		 * @param uid
+		 * @param uid - userid
 		 * @param cb
 		 */
 		createDockerContainer : function (lid, source_id, service_url, return_url, consumer_key, uid, cb) {
@@ -254,7 +254,7 @@ var WorkshopModule = (function () {
 		 * sets a timeout for the container and removes it if the timeout exceeds
 		 *
 		 * @param docker_hash
-		 * @param ms
+		 * @param ms - milliseconds
 		 */
 		setContainerTimeout : function(docker_hash, ms) {
 			console.log("Timeout for hash: " + docker_hash + " set.");
@@ -283,8 +283,8 @@ var WorkshopModule = (function () {
 		/**
 		 * checks if a given userid and  levelid matches a container
 		 *
-		 * @param uid
-		 * @param lid
+		 * @param uid - userid
+		 * @param lid - levelid
 		 * @param cb
 		 */
 		checkExistingContainer : function (uid, lid, cb) {
@@ -399,10 +399,25 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+
+function isRequestBodyValidForContainerCreate(body) {
+	if (	body
+		&& 	body.level
+		&& 	body.user_id
+		&& 	body.launch_presentation_return_url
+		&& 	body.lis_outcome_service_url
+		&& 	body.oauth_consumer_key
+	) {
+		return true;
+	}
+
+	return false;
+}
+
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
-	if(req.body && req.body.level && req.body.user_id && req.body.launch_presentation_return_url && req.body.lis_outcome_service_url && req.body.oauth_consumer_key) {
+	if (isRequestBodyValidForContainerCreate(req.body)) {
 		var provider = new lti.Provider(req.body.oauth_consumer_key, config.consumer_secret);
 		provider.valid_request(req, function (err, is_valid) {
 			// Check if the request is valid and if the outcomes service exists.
@@ -415,10 +430,20 @@ app.post('/container/create', function(req, res){
 				console.log(req.body.lis_result_sourcedid);
 				WorkshopModule.checkExistingContainer(req.body.user_id, req.body.level, function (error, exists) {
 					if (!exists) {
-						WorkshopModule.createDockerContainer(req.body.level, req.body.lis_result_sourcedid, req.body.lis_outcome_service_url, req.body.launch_presentation_return_url, req.body.oauth_consumer_key, req.body.user_id, function (err, docker_hash) {
-							if (docker_hash) WorkshopModule.redirectToPort(docker_hash, res);
-							else res.status(500).send({success: false, error: 'docker creation failed'});
-						});
+						WorkshopModule.createDockerContainer(
+							req.body.level,
+							req.body.lis_result_sourcedid,
+							req.body.lis_outcome_service_url,
+							req.body.launch_presentation_return_url,
+							req.body.oauth_consumer_key,
+							req.body.user_id,
+							function (err, docker_hash) {
+								if (docker_hash)
+									WorkshopModule.redirectToPort(docker_hash, res);
+								else
+									res.status(500).send({success: false, error: 'docker creation failed'});
+							}
+						);
 					} else WorkshopModule.redirectToPort(exists.docker_hash, res);
 				});
 			}
