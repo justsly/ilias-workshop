@@ -55,7 +55,7 @@ if($result = $db->query($sql)){
 		</div>		 
 	    <p><?php 
 		if(isset($id)){
-			echo $datarow[2];
+			echo $datarow[0];
 		}
 		else echo "Wilkommen auf dieser genial programmierten Seite!";
 		?></p>
