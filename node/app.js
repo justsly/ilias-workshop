@@ -36,7 +36,7 @@ var WorkshopModule = (function () {
 
 
 		/**
-		 * returns the level by a given id orn ull
+		 * returns the level by a given id or null
 		 *
 		 * @param lkey
 		 * @param cb
@@ -266,7 +266,7 @@ var WorkshopModule = (function () {
 		 * @param docker_hash
 		 */
 		destroyContainer : function (docker_hash) {
-			console.warn('destroying container with provided hash ' + docker_hash + ' assuming given docker container exists.');
+			console.warn('destroying container with provided hash ' + docker_hash);
 
 			var cmd = 'docker stop ' + docker_hash + '&& docker rm ' + docker_hash;
 			_exec(cmd);
@@ -294,7 +294,7 @@ var WorkshopModule = (function () {
 
 
 		/**
-		 * redirects the user to a container
+		 * redirects the user to a existing container
 		 *
 		 * @param docker_hash
 		 * @param res
@@ -315,7 +315,7 @@ var WorkshopModule = (function () {
 
 
 		/**
-		 * sends the solution to ilias
+		 * sends the HMAC-SHA1 signed solution to ilias
 		 *
 		 * @param service_url
 		 * @param source_id
@@ -385,14 +385,14 @@ app.listen(config.srv_port, config.listen_ip, function(){
 });
 
 // Set CORS Definition here
-var allowCrossDomain = function(req, res, next) {
+/*var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 
     next();
 };
-app.use(allowCrossDomain);
+app.use(allowCrossDomain);*/
 
 
 function isRequestBodyValidForContainerCreate(body) {
