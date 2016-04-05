@@ -373,28 +373,45 @@ if (!config.inDebug) {
 	console.error = function(){};
 }
 
+
 // Middleware to parse body
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
 
+
 // Register Server on Port
 app.listen(config.srv_port, config.listen_ip, function(){
 	console.log('Server running at http://'+config.listen_ip+':'+config.srv_port);
 });
 
-// Set CORS Definition here
-/*var allowCrossDomain = function(req, res, next) {
+
+/**
+ * function to define CORS headers for use in middleware
+ * @param req
+ * @param res
+ * @param next
+ */
+var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,DELETE');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 
     next();
 };
-app.use(allowCrossDomain);*/
 
 
+// Middleware to set CORS headers
+app.use(allowCrossDomain);
+
+
+/**
+ * checks if request body is valid an returns true or false
+ *
+ * @param body
+ * @returns {boolean}
+ */
 function isRequestBodyValidForContainerCreate(body) {
 	if (	body
 		&& 	body.level
@@ -408,6 +425,7 @@ function isRequestBodyValidForContainerCreate(body) {
 
 	return false;
 }
+
 
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
@@ -451,6 +469,7 @@ app.post('/container/create', function(req, res){
 	}
 });
 
+
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
@@ -475,6 +494,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 	});
 });
 
+
 // Set Secret from Container
 app.post('/container/secret', function(req, res){
     console.log("POST /container/secret called");
@@ -491,6 +511,7 @@ app.post('/container/secret', function(req, res){
     }
 });
 
+
 // Define Routing for Container Flush
 app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
@@ -503,6 +524,7 @@ app.delete('/container/:docker_hash/end', function(req, res){
 		res.end();
 	});
 });
+
 
 // Default Catch for wrong URLs sends 404
 app.get('*', function(req, res){
