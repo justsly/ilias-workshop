@@ -432,6 +432,7 @@ function isRequestBodyValidForContainerCreate(body) {
 
 app.use(express.static(__dirname + '/public'));
 
+
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
 	console.log("POST /container/create called");
@@ -532,10 +533,10 @@ app.delete('/container/:docker_hash/end', function(req, res){
 
 
 // Default Catch for wrong URLs sends 404
-app.get('*', function(req, res){
+/*app.get('*', function(req, res){
 	res.status(404).send({success:false, error:"Ressource not found!"});
 	res.end();
-});
+});*/
 
 
 // Define Levels
