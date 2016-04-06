@@ -430,7 +430,7 @@ function isRequestBodyValidForContainerCreate(body) {
 }
 
 
-app.use('/static', express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
