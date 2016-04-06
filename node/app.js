@@ -315,7 +315,8 @@ var WorkshopModule = (function () {
 					"</head>" +
 					"<body>" +
 						"<div class='container'>" +
-							"<p class='text-warning'>Please wait for Container is ready to go. You will be redirected to your Container in " + delay_seconds + " seconds...</p>" +
+							"<p class='text-warning'>Please wait for Container is ready to go. " +
+							"You will be redirected to your Container in " + delay_seconds + " seconds...</p>" +
 							"<div class='spinner'>" +
 								"<div class='cube1'></div>" +
 								"<div class='cube2'></div>" +
