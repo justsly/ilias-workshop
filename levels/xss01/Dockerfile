@@ -18,11 +18,11 @@ RUN mkdir /var/www/html/jquery
 ADD css/style.css /var/www/html/css
 ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD xss01/index.php /var/www/html/index.php
-ADD sqli/dbconnect.php /var/www/html/dbconnect.php
 ADD xss01/xss_infos.php /var/www/html/xss_infos.php
-ADD config.php /var/www/html/config.php
 ADD xss01/setup.sh /root/setup.sh
 ADD xss01/xss01.sql /root/xss01.sql
+ADD shared_content/dbconnect.php /var/www/html/dbconnect.php
+ADD config.php /var/www/html/config.php
 RUN chmod u+x /root/setup.sh
 
 # Clean up

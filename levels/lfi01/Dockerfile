@@ -24,8 +24,8 @@ ADD lfi01/page1 /var/www/html/includes/page1
 ADD lfi01/page2 /var/www/html/includes/page2
 ADD lfi01/page3 /var/www/html/includes/page3
 ADD lfi01/secret.php /var/www/html/secret.php
-ADD config.php /var/www/html/config.php
 ADD lfi01/setup.sh /root/setup.sh
+ADD config.php /var/www/html/config.php
 RUN chmod u+x /root/setup.sh
 
 # Clean up
