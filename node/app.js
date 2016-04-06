@@ -303,17 +303,13 @@ var WorkshopModule = (function () {
 		redirectToPort : function (docker_hash, res, delay_seconds) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					//setTimeout(function(){
-						var body = '<meta http-equiv="refresh" content="' + delay_seconds+'; url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port + '" />Sie werden in ' + delay_seconds + ' weitergeleitet...';
-						res.writeHead(200, {
-							//'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
-							'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;',
-							'Content-Length': body.length,
-							'Content-Type': 'text/html',
+					setTimeout(function(){
+						res.writeHead(302, {
+							'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
+							'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
 						});
-						res.write(body);
 						res.end();
-					//}, delay_seconds * 1000);
+					}, delay_seconds * 1000);
 				} else {
 					res.status(500).send({success: false, error: 'internal Server error'});
 				}
@@ -433,6 +429,8 @@ function isRequestBodyValidForContainerCreate(body) {
 	return false;
 }
 
+
+app.use('/static', expres.static('public'));
 
 // Method to create Level from ILIAS
 app.post('/container/create', function(req, res){
