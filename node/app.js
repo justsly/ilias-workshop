@@ -292,6 +292,15 @@ var WorkshopModule = (function () {
 			});
 		},
 
+
+		/**
+		 * builds data for the redirect page, so the user has some feedback while waiting time.
+		 *
+		 * @param delay_seconds
+		 * @param url
+		 * @param cb
+         * @returns {string}
+         */
 		buildRedirectPage: function(delay_seconds, url, cb){
 			var data =
 				"<!DOCTYPE html>" +
@@ -495,7 +504,7 @@ app.post('/container/create', function(req, res){
 							dockSetup,
 							function (err, docker_hash) {
 								if (docker_hash)
-									WorkshopModule.redirectToPort(docker_hash, res, 10);
+									WorkshopModule.redirectToPort(docker_hash, res, 5);
 								else
 									res.status(500).send({success: false, error: 'docker creation failed'});
 							}
