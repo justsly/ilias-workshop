@@ -1,12 +1,16 @@
-body {
-    background-color: #F0AB2B;
-}
-
 p {
     width: 800px;
     margin: 0 auto;
     text-align: center;
 }
+
+small {
+    font-size: 85%;
+}
+.text-info {
+    color: #3a87ad;
+}
+
 .spinner {
     margin: 250px auto;
     width: 80px;
@@ -15,7 +19,7 @@ p {
 }
 
 .cube1, .cube2 {
-    background-color: #ffffff;
+    background-color: #333;
     width: 30px;
     height: 30px;
     position: absolute;
