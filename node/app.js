@@ -493,7 +493,7 @@ app.post('/container/create', function(req, res){
 							dockSetup,
 							function (err, docker_hash) {
 								if (docker_hash)
-									WorkshopModule.redirectToPort(docker_hash, res, 5);
+									WorkshopModule.redirectToPort(docker_hash, res, 3);
 								else
 									res.status(500).send({success: false, error: 'docker creation failed'});
 							}
