@@ -302,7 +302,7 @@ var WorkshopModule = (function () {
 						"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 						"<meta name='description' content=''>" +
 						"<meta http-equiv='refresh' content='" + delay_seconds + "; url='" + url + "' />" +
-						"<link href='css/style.css' rel='stylesheet'>" +
+						"<link href='../css/style.css' rel='stylesheet'>" +
 					"</head>" +
 					"<body>" +
 						"<p>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
