@@ -421,6 +421,7 @@ var WorkshopModule = (function () {
 // Define some Framework Stuff
 const lti = require('ims-lti');
 const express = require('express');
+const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const config = require('./config.js');
 const app = express();
