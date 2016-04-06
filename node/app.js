@@ -383,6 +383,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use(express.compress());
+
 app.use(express.static(__dirname + '/public'));
 
 // Register Server on Port
@@ -531,10 +533,10 @@ app.delete('/container/:docker_hash/end', function(req, res){
 
 
 // Default Catch for wrong URLs sends 404
-app.get('*', function(req, res){
+/*app.get('*', function(req, res){
 	res.status(404).send({success:false, error:"Ressource not found!"});
 	res.end();
-});
+});*/
 
 
 // Define Levels
