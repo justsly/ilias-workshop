@@ -317,8 +317,7 @@ var WorkshopModule = (function () {
 								'Content-Type': 'text/html'
 							});
 							res.write(data);
-							res.write("test123");
-							//res.end();
+							res.end();
 						});
 
 				} else {
