@@ -20,8 +20,8 @@ ADD jquery/jquery-1.12.1.min.js /var/www/html/jquery/jquery-1.12.1.min.js
 ADD sqli01/sql_statement.txt /var/www/html/sql_statement.txt
 ADD sqli01/setup.sh /root/setup.sh
 ADD sqli01/sqli01.sql /root/sqli01.sql
+ADD sqli01/index.php /var/www/html/index.php
 ADD shared_content/admin_infos.php /var/www/html/admin_infos.php
-ADD shared_content/index.php /var/www/html/index.php
 ADD shared_content/dbconnect.php /var/www/html/dbconnect.php
 ADD config.php /var/www/html/config.php
 RUN chmod u+x /root/setup.sh
