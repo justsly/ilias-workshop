@@ -294,22 +294,22 @@ var WorkshopModule = (function () {
 
 
 		/**
-		 * redirects the user to a existing container
+		 * redirects the user to a existing container after a specified delay of seconds
 		 *
 		 * @param docker_hash
 		 * @param res
-		 */
-		redirectToPort : function (docker_hash, res) {
+         * @param delay_seconds
+         */
+		redirectToPort : function (docker_hash, res, delay_seconds) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					/*res.writeHead(302, {
-						'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
-						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
-					});*/
-					//res.header('refresh: 5; url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port);
-					res.writeHead(200, {'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'});
-					res.send('<meta http-equiv="refresh" content="5;url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port +'">Sie werden in 5 Sekunden weitergeleitet...');
-					res.end();
+					setTimeout(function(){
+						res.writeHead(302, {
+							'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
+							'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
+						});
+						res.end();
+					}, delay_seconds * 1000);
 				} else {
 					res.status(500).send({success: false, error: 'internal Server error'});
 				}
@@ -460,12 +460,12 @@ app.post('/container/create', function(req, res){
 							dockSetup,
 							function (err, docker_hash) {
 								if (docker_hash)
-									WorkshopModule.redirectToPort(docker_hash, res);
+									WorkshopModule.redirectToPort(docker_hash, res, 5);
 								else
 									res.status(500).send({success: false, error: 'docker creation failed'});
 							}
 						);
-					} else WorkshopModule.redirectToPort(exists.docker_hash, res);
+					} else WorkshopModule.redirectToPort(exists.docker_hash, res, 0);
 				});
 			}
 		});
