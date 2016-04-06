@@ -1,7 +1,7 @@
 #!/bin/bash
 /usr/sbin/apache2ctl start
 /etc/init.d/mysql start
-echo "create database shared_content" | mysql
+echo "create database sqli" | mysql
 mysql sqli < /root/sqli01.sql
 
 secret=$1
