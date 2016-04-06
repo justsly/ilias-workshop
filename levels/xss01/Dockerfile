@@ -3,6 +3,8 @@
 # VERSION 0.0.1
 FROM ubuntu:14.04.4
 MAINTAINER BB
+WORKDIR /root
+ENTRYPOINT ["./setup.sh"]
 
 # Setup apt
 RUN apt-get update -y && apt-get upgrade -y
@@ -20,19 +22,12 @@ ADD sqli/dbconnect.php /var/www/html/dbconnect.php
 ADD xss01/xss_infos.php /var/www/html/xss_infos.php
 ADD config.php /var/www/html/config.php
 ADD xss01/setup.sh /root/setup.sh
-ADD secret_generator.sh /root/secret_generator.sh
 ADD xss01/xss01.sql /root/xss01.sql
 RUN chmod u+x /root/setup.sh
-RUN chmod u+x /root/secret_generator.sh
 
 # Clean up
 RUN rm /var/www/html/index.html
 RUN apt-get clean
 
-#Fix Apache Error msg
+# Fix Apache error message because of missing ServerName
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Start Apache Server on Container startup
-RUN echo "/usr/sbin/apache2ctl start" >> /etc/bash.bashrc
-RUN echo "/etc/init.d/mysql start" >> /etc/bash.bashrc
-RUN echo "/root/setup.sh" >> /etc/bash.bashrc

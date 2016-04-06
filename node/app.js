@@ -6,7 +6,6 @@ var WorkshopModule = (function () {
 	var _exec = require('child_process').exec;
 	var _container_list = [];
 	var _level_list = [];
-	var _secret_list = [];
 
 
 	return {
@@ -50,52 +49,6 @@ var WorkshopModule = (function () {
 			}
 
 			return ((typeof(cb) === 'function') ? cb(null, null) : null);
-		},
-
-
-		/**
-		 * adds a secret to the secret list
-		 *
-		 * @param dc_secret
-		 */
-		addSecret : function(dc_secret){
-			_secret_list.push(dc_secret);
-		},
-
-
-		/**
-		 * checks if a given secret exists and returns true or false
-		 *
-		 * @param dc_secret
-		 * @param cb
-		 * @returns {boolean}
-		 */
-		checkSecretExists : function(dc_secret, cb) {
-			for (var i = 0; i < _secret_list.length; i++) {
-				if (_secret_list[i] == dc_secret){
-					return ((typeof(cb) === 'function') ? cb(null, true) : true);
-				}
-			}
-
-			return ((typeof(cb) === 'function') ? cb(null, false) : false);
-		},
-
-
-		/**
-		 * Remove Secret from list if matches
-		 *
-		 * @param dc_secret
-		 * @returns {boolean}
-		 */
-		removeSecret : function (dc_secret) {
-			for (var i = 0; i < _container_list.length; i++) {
-				if (_secret_list[i] == dc_secret) {
-					_secret_list.splice(i, 1);
-					return true;
-				}
-			}
-
-			return false;
 		},
 
 
@@ -355,12 +308,10 @@ var WorkshopModule = (function () {
 		redirectToPort : function (docker_hash, res, delay_seconds) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					//setTimeout(function(){
 						var url = config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port;
 
 						WorkshopModule.buildRedirectPage(delay_seconds, url, function(err, data){
 							res.writeHead(200, {
-								//'Location': url,
 								'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;',
 								'Content-Length': data.length,
 								'Content-Type': 'text/html'
@@ -368,7 +319,7 @@ var WorkshopModule = (function () {
 							res.write(data);
 							res.end();
 						});
-					//}, delay_seconds * 1000);
+
 				} else {
 					res.status(500).send({success: false, error: 'internal Server error'});
 				}
@@ -538,7 +489,6 @@ app.post('/container/create', function(req, res){
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-        //WorkshopModule.checkSecretExists(citem, req.params.dc_secret, function(err, secret_exists){
             if(citem && citem.secret === req.params.dc_secret){
 				WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
 					if(result) {
@@ -551,29 +501,8 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 			} else {
 				res.status(404).send({success:false, error: 'container not found or wrong secret!'});
 			}
-            /*} else {
-                res.status(401).send({success:false, error: 'Wrong secret!'});
-            }
-        })*/
 	});
 });
-
-
-// Set Secret from Container
-/*app.post('/container/secret', function(req, res){
-    console.log("POST /container/secret called");
-	if(req.body && req.body.dc_auth && req.body.secret){
-		if(req.body.dc_auth == config.dc_auth){
-            console.log("secret: "+ req.body.secret + " set");
-			WorkshopModule.addSecret(req.body.secret);
-			res.status(200).send({success:true});
-		} else {
-            res.status(500).send({success:false, error: 'wrong auth key. this is no challenge.'});
-        }
-	} else {
-        res.status(500).send({success:false, error: 'Wrong Format. Please use JSON.'})
-    }
-});*/
 
 
 // Define Routing for Container Flush
@@ -592,8 +521,8 @@ app.delete('/container/:docker_hash/end', function(req, res){
 
 // Default Catch for wrong URLs sends 404
 app.get('*', function(req, res){
-	res.status(404).send({success:false, error:"Ressource not found!"});
-	res.end();
+    res.status(404).send({success:false, error:"Ressource not found!"});
+    res.end();
 });
 
 
