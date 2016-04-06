@@ -292,6 +292,31 @@ var WorkshopModule = (function () {
 			});
 		},
 
+		buildRedirectPage: function(delay_seconds, url, cb){
+			var data =
+				"<!DOCTYPE html>" +
+				"<html lang='de'>" +
+					"<head>" +
+						"<meta charset='utf-8'>" +
+						"<title>Redirecting to Container...</title>" +
+						"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+						"<meta name='description' content=''>" +
+						"<meta http-equiv='refresh' content='" + delay_seconds + "'; url='" + url + "' />" +
+						"<link href='css/style.css' rel='stylesheet'>" +
+					"</head>" +
+					"<body>" +
+						"<p>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
+						"<div class='spinner'>" +
+							"<div class='cube1'></div>" +
+							"<div class='cube2'></div>" +
+						"</div>" +
+						"<p>If your redirect does not work please click <a href='" + url + "'>here</a></p>" +
+					"</body>" +
+					"</html>";
+
+			return ((typeof(cb) === 'function') ? cb(null, data) : data);
+		},
+
 
 		/**
 		 * redirects the user to a existing container after a specified delay of seconds
@@ -303,13 +328,20 @@ var WorkshopModule = (function () {
 		redirectToPort : function (docker_hash, res, delay_seconds) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					setTimeout(function(){
-						res.writeHead(302, {
-							'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
-							'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
+					//setTimeout(function(){
+						var url = config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port;
+
+						WorkshopModule.buildRedirectPage(delay_seconds, url, function(err, data){
+							res.writeHead(200, {
+								//'Location': url,
+								'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;',
+								'Content-Length': data.length,
+								'Content-Type': 'text/html'
+							});
+							res.write(data);
+							res.end();
 						});
-						res.end();
-					}, delay_seconds * 1000);
+					//}, delay_seconds * 1000);
 				} else {
 					res.status(500).send({success: false, error: 'internal Server error'});
 				}
