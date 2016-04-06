@@ -4,5 +4,5 @@ for i in "${array[@]}"
 do
   level=${i#*/}
   level=${level%/*}
-  docker build -f $i -t $level .
+  docker build -f $i -t "sclyther/ilias_$level" .
 done
