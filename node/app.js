@@ -307,7 +307,7 @@ var WorkshopModule = (function () {
 						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
 					});*/
 					//res.header('refresh: 5; url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port);
-					res.header('Set-Cookie: dockerHash=' + citem.docker_hash + '; Path=/;');
+					res.writeHead(200, {'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'});
 					res.send('<meta http-equiv="refresh" content="5;url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port +'">Sie werden in 5 Sekunden weitergeleitet...');
 					res.end();
 				} else {
