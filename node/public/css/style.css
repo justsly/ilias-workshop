@@ -1,6 +1,7 @@
 .zentriert {
     width: 800px;
     margin: 0 auto;
+    text-align: center;
 }
 .spinner {
     margin: 250px auto;
