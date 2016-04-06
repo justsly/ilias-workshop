@@ -302,10 +302,13 @@ var WorkshopModule = (function () {
 		redirectToPort : function (docker_hash, res) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
 				if (citem) {
-					res.writeHead(302, {
+					/*res.writeHead(302, {
 						'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
 						'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;'
-					});
+					});*/
+					res.header('refresh: 5; url=' + config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port);
+					res.header('Set-Cookie: dockerHash=' + citem.docker_hash + '; Path=/;');
+					res.send('Sie werden in 5 Sekunden weitergeleitet...');
 					res.end();
 				} else {
 					res.status(500).send({success: false, error: 'internal Server error'});
