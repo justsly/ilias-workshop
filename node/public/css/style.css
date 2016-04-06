@@ -12,6 +12,12 @@ small {
     color: #c09853;
 }
 
+.container {
+    margin: 100px auto;
+    width: 95%;
+    height: 95%;
+}
+
 .spinner {
     margin: 250px auto;
     width: 80px;
