@@ -383,7 +383,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(express.static(__dirname + 'public'));
+app.use(express.static(__dirname + '/public'));
 
 // Register Server on Port
 app.listen(config.srv_port, config.listen_ip, function(){
