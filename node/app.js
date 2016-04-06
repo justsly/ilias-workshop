@@ -108,11 +108,12 @@ var WorkshopModule = (function () {
 		 * @param service_url
 		 * @param return_url
 		 * @param consumer_key
-		 * @param uid - userid
-		 * @param lid - levelid
-		 * @constructor
-		 */
-		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, consumer_key, uid, lid) {
+         * @param uid
+         * @param lid
+         * @param secret
+         * @constructor
+         */
+		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, consumer_key, uid, lid, secret) {
 			this.docker_hash = docker_h;
 			this.docker_port = docker_p;
 			this.source_id = source_id;
@@ -121,6 +122,7 @@ var WorkshopModule = (function () {
 			this.consumer_key = consumer_key;
 			this.uid = uid;
 			this.lid = lid;
+			this.secret = secret;
 		},
 
 
@@ -207,7 +209,7 @@ var WorkshopModule = (function () {
 				if (litem) {
 					console.log('level exists: ' + litem.lvalue);
 
-					var cmd = 'docker run -dit -p 0:' + config.redirect_port.toString() + ' sclyther/' + litem.lvalue;
+					var cmd = 'docker run -d -p 0:' + config.redirect_port.toString() + ' sclyther/' + litem.lvalue + ' ' + dockSetup.secret;
 
 					_exec(cmd, function (error, stdout) {
 						if (!error) {
@@ -224,7 +226,8 @@ var WorkshopModule = (function () {
 										dockSetup.launch_presentation_return_url,
 										dockSetup.oauth_consumer_key,
 										dockSetup.user_id,
-										dockSetup.level
+										dockSetup.level,
+										dockSetup.secret
 									);
 
 									WorkshopModule.addNewContainer(con, function(err, dc) {
@@ -290,6 +293,18 @@ var WorkshopModule = (function () {
 					return ((typeof(cb) === 'function') ? cb(null, false) : false);
 				}
 			});
+		},
+
+
+		/**
+		 * creates Secret for DockSetup
+		 *
+		 * @returns {*}
+         */
+		createSecret : function(){
+			var current_date = (new Date()).valueOf().toString();
+			var random = Math.random().toString();
+			return crypto.createHash('md5').update(current_date + random).digest('hex');
 		},
 
 
@@ -498,7 +513,8 @@ app.post('/container/create', function(req, res){
 							outcome_service_url: req.body.lis_outcome_service_url,
 							launch_presentation_return_url: req.body.launch_presentation_return_url,
 							oauth_consumer_key: req.body.oauth_consumer_key,
-							user_id: req.body.user_id
+							user_id: req.body.user_id,
+							secret: WorkshopModule.createSecret()
 						};
 
 						WorkshopModule.createDockerContainer(
@@ -521,30 +537,29 @@ app.post('/container/create', function(req, res){
 // Return to ILIAS with complete flag
 app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-        WorkshopModule.checkSecretExists(req.params.dc_secret, function(err, secret_exists){
-            if(secret_exists){
-                if(citem){
-					WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
-						if(result) {
-							res.status(200).send({success:true, message: 'Mission solved.'});
-							WorkshopModule.removeSecret(req.params.dc_secret);
-						} else {
-							res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
-						}
-                        });
-                } else {
-                    res.status(404).send({success:false, error: 'container not found!'});
-                }
-            } else {
+        //WorkshopModule.checkSecretExists(citem, req.params.dc_secret, function(err, secret_exists){
+            if(citem && citem.secret === req.params.dc_secret){
+				WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
+					if(result) {
+						res.status(200).send({success:true, message: 'Mission solved.'});
+						//WorkshopModule.removeSecret(req.params.dc_secret);
+					} else {
+						res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
+					}
+				});
+			} else {
+				res.status(404).send({success:false, error: 'container not found or wrong secret!'});
+			}
+            /*} else {
                 res.status(401).send({success:false, error: 'Wrong secret!'});
             }
-        })
+        })*/
 	});
 });
 
 
 // Set Secret from Container
-app.post('/container/secret', function(req, res){
+/*app.post('/container/secret', function(req, res){
     console.log("POST /container/secret called");
 	if(req.body && req.body.dc_auth && req.body.secret){
 		if(req.body.dc_auth == config.dc_auth){
@@ -557,7 +572,7 @@ app.post('/container/secret', function(req, res){
 	} else {
         res.status(500).send({success:false, error: 'Wrong Format. Please use JSON.'})
     }
-});
+});*/
 
 
 // Define Routing for Container Flush
