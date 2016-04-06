@@ -309,8 +309,9 @@ var WorkshopModule = (function () {
 							//'Location': config.redirect_protocol + '://' + config.redirect_ip + '' + citem.docker_port,
 							'Set-Cookie': 'dockerHash=' + citem.docker_hash + '; Path=/;',
 							'Content-Length': body.length,
-							'Content-Type': 'text/plain'
+							'Content-Type': 'text/plain',
 						});
+						res.write(body);
 						res.end();
 					//}, delay_seconds * 1000);
 				} else {
