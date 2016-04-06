@@ -1,1 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
+array=(`find . -name Dockerfile`)
+for i in "${array[@]}"
+do
+  level=${i#*/}
+  level=${level%/*}
+  docker build -f $i -t $level .
+done
