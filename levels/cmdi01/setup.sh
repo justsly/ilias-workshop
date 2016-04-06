@@ -7,6 +7,4 @@ echo '<?php' > /var/www/html/dc_secret.php
 echo '$dc_secret="'"$secret"'";' >> /var/www/html/dc_secret.php
 echo '?>' >> /var/www/html/dc_secret.php
 
-while true; do
-    sleep 3600
-done
+tail -f /var/log/apache2/access.log
