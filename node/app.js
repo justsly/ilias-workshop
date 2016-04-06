@@ -305,12 +305,12 @@ var WorkshopModule = (function () {
 						"<link href='../css/style.css' rel='stylesheet'>" +
 					"</head>" +
 					"<body>" +
-						"<p class='zentriert'>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
+						"<p>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
 						"<div class='spinner'>" +
 							"<div class='cube1'></div>" +
 							"<div class='cube2'></div>" +
 						"</div>" +
-						"<p class='zentriert'>If your redirect does not work please click <a href='" + url + "'>here</a></p>" +
+						"<p>If your redirect does not work please click <a href='" + url + "'>here</a></p>" +
 					"</body>" +
 					"</html>";
 
