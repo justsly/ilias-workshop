@@ -305,7 +305,7 @@ var WorkshopModule = (function () {
 						"<link href='../css/style.css' rel='stylesheet'>" +
 					"</head>" +
 					"<body>" +
-						"<p class='text-warning>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
+						"<p class='text-warning'>Please wait for Container is build. You will be redirected to your Container in " + delay_seconds + " seconds</p>" +
 						"<div class='spinner'>" +
 							"<div class='cube1'></div>" +
 							"<div class='cube2'></div>" +
@@ -493,7 +493,7 @@ app.post('/container/create', function(req, res){
 							dockSetup,
 							function (err, docker_hash) {
 								if (docker_hash)
-									WorkshopModule.redirectToPort(docker_hash, res, 3);
+									WorkshopModule.redirectToPort(docker_hash, res, 10);
 								else
 									res.status(500).send({success: false, error: 'docker creation failed'});
 							}
