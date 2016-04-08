@@ -428,17 +428,12 @@ app.use(allowCrossDomain);
  * @returns {boolean}
  */
 function isRequestBodyValidForContainerCreate(body) {
-	if (	body
-		&& 	body.level
-		&& 	body.user_id
-		&& 	body.launch_presentation_return_url
-		&& 	body.lis_outcome_service_url
-		&& 	body.oauth_consumer_key
-	) {
-		return true;
-	}
-
-	return false;
+	return body
+		&& body.level
+		&& body.user_id
+		&& body.launch_presentation_return_url
+		&& body.lis_outcome_service_url
+		&& body.oauth_consumer_key;
 }
 
 
