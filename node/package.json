@@ -10,6 +10,7 @@
   "license": "SEE LICENSE IN <../readme.md>",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "crypto": "0.0.3",
     "express": "^4.13.4",
     "ims-lti": "^3.0.2"
   }
