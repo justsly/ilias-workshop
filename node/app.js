@@ -54,7 +54,7 @@ var WorkshopModule = (function () {
 
         /**
          * constructor for DockerContainer object
-         * 
+         *
          * @param docker_h
          * @param docker_p
          * @param source_id
@@ -482,7 +482,7 @@ app.post('/container/create', function(req, res){
 				});
 			}
 		});
-	}
+	} else res.status(401).send({success: false, error: 'Unauthorized. Please navigate from ILIAS.'});
 });
 
 
