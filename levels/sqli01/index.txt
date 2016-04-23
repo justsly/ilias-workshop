@@ -1,0 +1,5 @@
+$sql = <<<SQL
+SELECT *
+FROM users
+WHERE user = '$user' and password = '$password'
+SQL;
