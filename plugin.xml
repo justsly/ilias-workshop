@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<interface type="embed">
+
+    <title>Websecurity Workshop</title>
+    <description>Erstellt einen Docker Container zur praktischen Demonstration von Schwachstellen in Webanwendungen.</description>
+
+    <template><![CDATA[
+        <h1>{LTI_RESOURCE_LINK_DESCRIPTION}</h1>
+        <p>{ILIAS_INSTRUCTIONS}</p>
+        <form action="{LAUNCH_URL}" method="post" target="{FORM_TARGET}" encType="application/x-www-form-urlencoded">
+	    {HIDDEN_INPUTS}
+	    <input class="btn btn-default" type="submit" value = "Starten" />
+        <br />
+        <br />
+        <input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" />
+	    {DEBUG_EMBED}
+        </form>
+    ]]></template>
+
+    <fields>
+
+        <!-- administrative input fields -->
+
+        <field name="SEC_HEADER" level="type" type="header" encoding="">
+            <title>Einstellungen zu OAUTH</title>
+        </field>
+
+        <field name="SECRET" level="type" type="text" required="1" encoding="">
+            <title>Geheimnis</title>
+            <description>Geteiltes Geheimnis mit dem Tool-Anbieter, e.g. secret</description>
+        </field>
+
+        <field name="HEADER_PRIVACY" level="type" type="header" encoding="">
+            <title>Einstellungen zum Datenschutz</title>
+        </field>
+
+        <field name="DESCRIPTION_PRIVACY" level="type" type="description" encoding="">
+            <description>Bitte kl&#xE4;ren Sie mit Ihrem Datenschutzbeauftragten, welche pers&#xF6;nlichen Daten an externe Dienste &#xFC;bergeben werden d&#xFC;rfen.</description>
+        </field>
+
+        <field name="SEND_USER_ID" level="type" type="radio" required="1" default="none" encoding="">
+            <title>Nutzer-Kennung</title>
+            <option value="none">
+                <title>Keine</title>
+                <description>Keine Kennung senden. Die Benutzer werden unterbrochene Bearbeitungen nicht fortsetzen k&#xF6;nnen.</description>
+            </option>
+            <option value="coded">
+                <title>Code</title>
+                <description>Code senden. Dieser ist mit jedem Aufruf identisch, erlaubt aber keinen direkten R&#xFC;ckschluss auf den urspr&#xFC;nglichen Nutzer.</description>
+            </option>
+        </field>
+
+        <!-- helping calculations for privacy settings -->
+
+        <field name="LTI_USER_ID" type="calculated" function="selectByName">
+            <param name="value">{SEND_USER_ID}</param>
+            <param name="none"/>
+            <param name="coded">{ILIAS_USER_CODE}</param>
+            <param name=""/>
+        </field>
+
+        <!-- instructor input fields -->
+
+        <field name="HEADER_LINK_DATA" level="object" type="header" encoding="">
+            <title>Aufruf-Einstellungen</title>
+        </field>
+
+        <field name="LAUNCH_URL" level="object" type="text" required="1" encoding="">
+            <title>URL</title>
+            <description>URL des externen Tools, z.B. http://lti.tools/test/tp.php</description>
+        </field>
+
+        <field name="LEVEL_ID" type="text" required="1" encoding="strip_tags,singlequotes,no_break,trim">
+            <title>Level ID</title>
+            <description>ID des Workshoplevels, z.B. ping</description>
+        </field>
+
+        <field name="RETURN_MSG" type="text" required="1" encoding="">
+            <title>Return Message</title>
+            <description>Nachricht, welche bei bestandener Aufgabe angezeigt wird.</description>
+        </field>
+
+        <field name="KEY" level="object" type="text" required="1" encoding="">
+            <title>Schl&#xFC;ssel</title>
+            <description>Schl&#xFC;ssel f&#xFC;r den Zugriff, z.B. 12345</description>
+        </field>
+
+        <!-- instructor appearance settings -->
+
+        <field name="HEADER_APPEARANCE" level="object" type="header" encoding="">
+            <title>Erscheinungsbild</title>
+        </field>
+
+        <field name="LAUNCH_TARGET" level="object" type="radio" required="1" default="top" encoding="">
+            <title>Darstellung</title>
+            <option value="top">
+                <title>Aktuelles Fenster</title>
+                <description>&#xD6;ffnet das Tool im aktuellen Fenster. Es kann einen R&#xFC;cksprung-Link anzeigen.</description>
+            </option>
+            <option value="blank">
+                <title>Neues Fenster</title>
+                <description>&#xD6;ffnet das Tool in einem neuen Fenster</description>
+            </option>
+        </field>
+
+        <field name="SHOW_DEBUG" level="object" type="checkbox" value="1" encoding="">
+            <title>Daten&#xFC;berpr&#xFC;fung</title>
+            <description>Zeigt einen Link zum Betrachten der &#xFC;bermittelten Daten</description>
+        </field>
+
+        <!-- helping calculations for appearance settings -->
+
+        <field name="FORM_TARGET" type="calculated" function="selectByName">
+            <param name="value">{LAUNCH_TARGET}</param>
+            <param name="top">_top</param>
+            <param name="blank">_blank</param>
+            <param name=""/>
+        </field>
+
+        <field name="LTI_LAUNCH_RETURN_URL" type="calculated" function="selectByName" encoding="">
+            <param name="value">{LAUNCH_TARGET}</param>
+            <param name="top">{ILIAS_RETURN_URL}</param>
+            <param name=""/>
+        </field>
+
+        <!-- helping templates and calculations for other LTI data -->
+
+        <field name="LTI_RESOURCE_LINK_TITLE" type="template" encoding="strip_tags,singlequotes,no_break,trim">
+            <template><![CDATA[{ILIAS_TITLE}]]></template>
+        </field>
+
+        <field name="LTI_RESOURCE_LINK_DESCRIPTION" type="template" encoding="strip_tags,singlequotes,trim">
+            <template><![CDATA[{ILIAS_DESCRIPTION}]]></template>
+        </field>
+
+        <field name="LTI_TOOL_CONSUMER_INSTANCE_DESCRIPTION" type="template" encoding="strip_tags,singlequotes,trim">
+            <template><![CDATA[{ILIAS_LMS_DESCRIPTION}]]></template>
+        </field>
+
+        <field name="LTI_ROLES" type="calculated" function="selectByName">
+            <param name="value">{ILIAS_USER_WRITE_ACCESS}</param>
+            <param name="1">Instructor</param>
+            <param name="0">Learner</param>
+        </field>
+
+
+        <!-- prepare the LTI parameters -->
+
+        <field name="BASIC_PARAMETERS" type="calculated" function="createArray">
+
+            <!-- Basic Launch Data -->
+            <param name="lti_message_type">basic-lti-launch-request</param><!-- required -->
+            <param name="lti_version">LTI-1p0</param><!-- required -->
+            <param name="resource_link_id">{ILIAS_REF_ID}</param><!-- required -->
+            <param name="level">{LEVEL_ID}</param><!-- required -->
+            <param name="return_msg">{RETURN_MSG}</param><!-- required -->
+
+            <param name="user_id">{LTI_USER_ID}</param><!-- recommended -->
+
+            <param name="launch_presentation_locale">{ILIAS_USER_LANG}</param><!-- optional -->
+            <param name="launch_presentation_return_url">{LTI_LAUNCH_RETURN_URL}</param><!-- recommended -->
+
+            <param name="lis_result_sourcedid">{ILIAS_RESULT_ID}</param><!-- required -->
+            <param name="lis_outcome_service_url">{ILIAS_RESULT_URL}</param><!-- required -->
+
+        </field>
+
+        <field name="SIGNED_PARAMETERS" type="calculated" function="signOAuth">
+            <param name="url">{LAUNCH_URL}</param>
+            <param name="key">{KEY}</param>
+            <param name="secret">{SECRET}</param>
+            <param name="callback">about:blank</param>
+            <param name="http_method">POST</param>
+            <param name="sign_method">HMAC_SHA1</param>
+            <param name="token"/>
+            <param name="data">{BASIC_PARAMETERS}</param>
+        </field>
+
+        <field name="HIDDEN_INPUTS" type="calculated" function="createHtmlInputFields">
+            <param name="type">hidden</param>
+            <param name="data">{SIGNED_PARAMETERS}</param>
+        </field>
+
+        <!-- Debugging support -->
+
+        <field name="DEBUG_DATA" type="calculated" function="showValues">
+            <param name="data">{SIGNED_PARAMETERS}</param>
+        </field>
+
+        <field name="DEBUG_TOGGLE" type="template">
+            <template><![CDATA[
+		    <script language="javascript">
+				function basicltiDebugToggle() {
+				    var ele = document.getElementById("basicltiDebug");
+				    if(ele.style.display == "block") {
+				        ele.style.display = "none";
+				    } else {
+				        ele.style.display = "block";
+				    }
+				}
+			</script>
+			<a class="small" id="displayText" href="javascript:basicltiDebugToggle();">Datenüberprüfung</a>
+			<div id="basicltiDebug" style="display:none">
+				<b>basiclti_endpoint</b><br/>
+				{LAUNCH_URL}<br/>
+				&nbsp;<br/>
+				<b>basiclti_parameters</b><br/>
+				{DEBUG_DATA}
+			</div>
+		]]></template>
+        </field>
+
+        <field name="DEBUG_EMBED" type="calculated" function="selectByName">
+            <param name="value">{SHOW_DEBUG}</param>
+            <param name="1">{DEBUG_TOGGLE}</param>
+            <param name=""/>
+        </field>
+
+    </fields>
+</interface>
