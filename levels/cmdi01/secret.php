@@ -35,7 +35,7 @@ echo "</script>";
                 	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
                 	type: 'DELETE',
                 	success: function(result) {
-            		    window.location = result.return_url + "&lti_msg=Lernziel erreicht!";
+            		    window.location = result.return_url + "&lti_msg=" + result.return_msg;
                 	},
                 	error: function(){
                 	    alert("Error Occured! Please Try again.");

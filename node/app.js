@@ -52,26 +52,28 @@ var WorkshopModule = (function () {
 		},
 
 
-		/**
-		 * constructor for DockerContainer object
-		 *
-		 * @param docker_h
-		 * @param docker_p
-		 * @param source_id
-		 * @param service_url
-		 * @param return_url
-		 * @param consumer_key
+        /**
+         * constructor for DockerContainer object
+         * 
+         * @param docker_h
+         * @param docker_p
+         * @param source_id
+         * @param service_url
+         * @param return_url
+         * @param return_msg
+         * @param consumer_key
          * @param uid
          * @param lid
          * @param secret
          * @constructor
          */
-		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, consumer_key, uid, lid, secret) {
+		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, return_msg, consumer_key, uid, lid, secret) {
 			this.docker_hash = docker_h;
 			this.docker_port = docker_p;
 			this.source_id = source_id;
 			this.service_url = service_url;
 			this.return_url = return_url;
+			this.return_msg = return_msg;
 			this.consumer_key = consumer_key;
 			this.uid = uid;
 			this.lid = lid;
@@ -177,6 +179,7 @@ var WorkshopModule = (function () {
 										dockSetup.result_sourcedid,
 										dockSetup.outcome_service_url,
 										dockSetup.launch_presentation_return_url,
+										dockSetup.return_msg,
 										dockSetup.oauth_consumer_key,
 										dockSetup.user_id,
 										dockSetup.level,
@@ -433,6 +436,7 @@ function isRequestBodyValidForContainerCreate(body) {
 		&& body.user_id
 		&& body.launch_presentation_return_url
 		&& body.lis_outcome_service_url
+		&& body.return_msg
 		&& body.oauth_consumer_key;
 }
 
@@ -459,6 +463,7 @@ app.post('/container/create', function(req, res){
 							result_sourcedid: req.body.lis_result_sourcedid,
 							outcome_service_url: req.body.lis_outcome_service_url,
 							launch_presentation_return_url: req.body.launch_presentation_return_url,
+							return_msg: req.body.return_msg,
 							oauth_consumer_key: req.body.oauth_consumer_key,
 							user_id: req.body.user_id,
 							secret: WorkshopModule.createSecret()
@@ -505,7 +510,7 @@ app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if (citem) {
 			WorkshopModule.destroyContainer(req.params.docker_hash);
-			res.status(200).send({success: true, return_url: citem.return_url});
+			res.status(200).send({success: true, return_url: citem.return_url, return_msg: citem.return_msg});
 		} else {
 			res.status(404).send({success: false, error: 'container not found!'});
 		}
