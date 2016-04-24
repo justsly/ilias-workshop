@@ -5,16 +5,31 @@
     <description>Erstellt einen Docker Container zur praktischen Demonstration von Schwachstellen in Webanwendungen.</description>
 
     <template><![CDATA[
+        <p><input id="nextLevel" class="btn btn-default" value = "Next Level" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></p>
+        <div id="challenge" style="display:block">
         <h1>{LTI_RESOURCE_LINK_DESCRIPTION}</h1>
         <p>{ILIAS_INSTRUCTIONS}</p>
         <form action="{LAUNCH_URL}" method="post" target="{FORM_TARGET}" encType="application/x-www-form-urlencoded">
 	    {HIDDEN_INPUTS}
+            <br />
 	    <input class="btn btn-default" type="submit" value = "Starten" />
-        <br />
-        <br />
-        <input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" />
 	    {DEBUG_EMBED}
         </form>
+        </div>
+        <br />
+        <p><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" /></p>
+        <script language="javascript">
+               var ele = document.getElementById("nextLevel");
+               var chal = document.getElementById("challenge");
+               var solved = document.getElementById("il_message_focus");
+	       if(ele.getAttribute('onclick') != "location.href=''" && solved) {
+		  ele.style.display = "block";
+                  chal.style.display = "none";
+	       } else {
+		  ele.style.display = "none";
+                  chal.style.display = "block";
+               }
+	    </script>
     ]]></template>
 
     <fields>
@@ -73,6 +88,11 @@
         <field name="LEVEL_ID" type="text" required="1" encoding="strip_tags,singlequotes,no_break,trim">
             <title>Level ID</title>
             <description>ID des Workshoplevels, z.B. ping</description>
+        </field>
+
+        <field name="NEXT_LEVEL" type="text" required="0" encoding="">
+            <title>Next Level</title>
+            <description><![CDATA[Link zur darauffolgenden Lerneinheit, z.B. goto.php?target=xxco_73&client_id=ilias (optional)]]></description>
         </field>
 
         <field name="RETURN_MSG" type="text" required="1" encoding="">

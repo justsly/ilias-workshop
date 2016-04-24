@@ -434,7 +434,7 @@ function isRequestBodyValidForContainerCreate(body) {
 	return body
 		&& body.level
 		&& body.user_id
-		&& body.launch_presentation_return_url
+		//&& body.launch_presentation_return_url
 		&& body.lis_outcome_service_url
 		&& body.return_msg
 		&& body.oauth_consumer_key;
