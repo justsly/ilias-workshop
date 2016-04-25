@@ -26,7 +26,7 @@ echo "</script>";
 
 <script>
 	$("#complete_level").click(function(){
-	    if(srv_ip){
+	    if(typeof srv_ip === "undefined"){
 	        $.ajax({
 		        url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
 		        type: 'GET',
