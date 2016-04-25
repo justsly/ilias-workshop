@@ -27,25 +27,29 @@ echo "</script>";
 <script>
 	$("#complete_level").click(function(){
 	    $.ajax({
-		    url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
-		    type: 'GET',
-		    success: function(result) {
-			    console.log(result);
-			    $.ajax({
-                	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
-                	type: 'DELETE',
-                	success: function(result) {
-                	    if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
-                	    else {
-                	        alert(result.return_msg + '\nDer Container wird nun geschlossen.');
-                            window.close();
-                        }
+	        if(srv_ip){
+		        url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
+		        type: 'GET',
+		        success: function(result) {
+			        console.log(result);
+			        $.ajax({
+                	    url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
+                	    type: 'DELETE',
+                	    success: function(result) {
+                	        if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
+                	        else {
+                	            alert(result.return_msg + '\nDer Container wird nun geschlossen.');
+                                window.close();
+                            }
 
-                	},
-                	error: function(){
-                	    alert("Error Occured! Please Try again.");
-                	}
-            	});
+                	    },
+                	    error: function(){
+                	        alert("Error Occured! Please Try again.");
+                	    }
+            	    });
+		        }
+		    } else {
+		        alert("Please browse this file directly to solve the level. It is not meant to solve this with 'cat'.");
 		    }
 	    });
 	});
