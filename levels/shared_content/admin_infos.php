@@ -24,7 +24,11 @@ echo "</script>";
                 	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
                 	type: 'DELETE',
                 	success: function(result) {
-                        window.location = result.return_url + "&lti_msg=" + result.return_msg;
+                        if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
+                                        	    else {
+                                        	        alert(result.return_msg + '\nDer Container wird nun geschlossen.');
+                                                    window.close();
+                                                }
                     },
                     error: function(){
                         alert("Error Occured! Please Try again.");
