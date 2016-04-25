@@ -26,8 +26,8 @@ echo "</script>";
 
 <script>
 	$("#complete_level").click(function(){
-	    $.ajax({
-	        if(srv_ip){
+	    if(srv_ip){
+	        $.ajax({
 		        url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
 		        type: 'GET',
 		        success: function(result) {
@@ -48,10 +48,10 @@ echo "</script>";
                 	    }
             	    });
 		        }
-		    } else {
-		        alert("Please browse this file directly to solve the level. It is not meant to solve this with 'cat'.");
-		    }
-	    });
+		    });
+		} else {
+		    alert("Please browse this file directly to solve the level. It is not meant to solve this with 'cat'.");
+		}
 	});
 	function getCookie(cname) {
     		var name = cname + "=";
