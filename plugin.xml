@@ -5,20 +5,27 @@
     <description>Erstellt einen Docker Container zur praktischen Demonstration von Schwachstellen in Webanwendungen.</description>
 
     <template><![CDATA[
-        <p><input id="nextLevel" class="btn btn-default" value = "Next Level" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></p>
+        <table width="100%">
+        <tr>
         <div id="challenge" style="display:block">
         <h1>{LTI_RESOURCE_LINK_DESCRIPTION}</h1>
-        <pre>{ILIAS_INSTRUCTIONS}</pre>
+        <br />
+        <pre style="font-family: Consolas,monospace">{ILIAS_INSTRUCTIONS}</pre>
+        <p id="basic_explain"><small>Eine Einführung in das Thema erhalten Sie unter folgendem <a id="exp_link" href="{WS_LEARNING}" target="_blank">Link</a>.</small></p>
         <form action="{LAUNCH_URL}" method="post" target="{FORM_TARGET}" encType="application/x-www-form-urlencoded">
 	    {HIDDEN_INPUTS}
             <br />
-	    <input class="btn btn-default" type="submit" value = "Starten" />
+	    <td><input class="btn btn-default" value = "Container starten" onClick="submit()"/></td>
 	    {DEBUG_EMBED}
         </form>
         </div>
-        <br />
-        <p><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" /></p>
+        <td align="middle"><input id="nextLevel" class="btn btn-default" value = "Next Level" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></td>
+        <td align="right"><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" /></td>
+        </tr>
+        </table>
         <script language="javascript">
+               var basex = document.getElementById("basic_explain");
+               var expl = document.getElementById("exp_link");
                var ele = document.getElementById("nextLevel");
                var chal = document.getElementById("challenge");
                var solved = document.getElementById("il_message_focus");
@@ -28,6 +35,11 @@
 	       } else {
 		  ele.style.display = "none";
                   chal.style.display = "block";
+               }
+               if(expl.getAttribute('href') == "") {
+                  basex.style.display = "none";
+               } else {
+                  basex.style.display = "block";
                }
 	    </script>
     ]]></template>
@@ -93,6 +105,11 @@
         <field name="NEXT_LEVEL" type="text" required="0" encoding="">
             <title>Next Level</title>
             <description><![CDATA[Link zur darauffolgenden Lerneinheit, z.B. goto.php?target=xxco_73&client_id=ilias (optional)]]></description>
+        </field>
+
+        <field name="WS_LEARNING" type="text" required="0" encoding="">
+            <title>Link zu Grundlagen</title>
+            <description><![CDATA[Link zu den Grundlagen, welche zum bestehen der Lerneinheit benötigt werden. z.B. goto.php?target=lm_87&client_id=ilias (optional)]]></description>
         </field>
 
         <field name="RETURN_MSG" type="text" required="1" encoding="">
