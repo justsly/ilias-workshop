@@ -15,11 +15,11 @@
         <form id="container_form" action="{LAUNCH_URL}" method="post" target="{FORM_TARGET}" encType="application/x-www-form-urlencoded">
 	    {HIDDEN_INPUTS}
             <br />
-	    <td><input class="btn btn-default" value = "Container starten" onClick="containerStart()"/></td>
+	    <td><input class="btn btn-default" value = "Aufgabe starten" onClick="containerStart()"/></td>
 	    {DEBUG_EMBED}
         </form>
         </div>
-        <td align="middle"><input id="nextLevel" class="btn btn-default" value = "Next Level" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></td>
+        <td align="middle"><input id="nextLevel" class="btn btn-default" value = "Nächste Aufgabe" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></td>
         <td align="right"><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" /></td>
         </tr>
         </table>
