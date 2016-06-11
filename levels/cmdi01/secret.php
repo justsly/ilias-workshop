@@ -32,9 +32,9 @@ echo "</script>";
 		        //type: 'GET',
 		        url: 'http://' + srv_ip + srv_port + '/container/complete',
 		        type: 'PUT',
-		        contentType: "application/json",
-		        dataType: "json",
-                data: {"docker_hash": getCookie('dockerHash'), "dc_secret": dc_secret}
+		        contentType: 'application/json',
+		        dataType: 'json',
+                data: {"docker_hash": getCookie('dockerHash'), "dc_secret": dc_secret},
 		        success: function(result) {
 			        console.log(result);
 			        $.ajax({
