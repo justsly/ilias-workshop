@@ -440,7 +440,12 @@ function isRequestBodyValidForContainerCreate(body) {
 		&& body.oauth_consumer_key;
 }
 
-
+/**
+ * checks if request body is valid an returns true or false
+ *
+ * @param body
+ * @returns {boolean}
+ */
 function isRequestBodyValidToComplete(body) {
 	return body
 		&& body.docker_hash
@@ -494,23 +499,6 @@ app.post('/container/create', function(req, res){
 
 
 // Return to ILIAS with complete flag
-app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res){
-	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
-            if(citem && citem.secret === req.params.dc_secret){
-				WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function(err, result) {
-					if(result) {
-						res.status(200).send({success:true, message: 'Mission solved.'});
-						//WorkshopModule.removeSecret(req.params.dc_secret);
-					} else {
-						res.status(500).send({success:false, message: 'Internal Error. Could not send solution to ILIAS.'});
-					}
-				});
-			} else {
-				res.status(404).send({success:false, error: 'container not found or wrong secret!'});
-			}
-	});
-});
-
 app.put('/container/complete', function(req, res){
 	console.log("PUT /container/create called");
 	if (isRequestBodyValidToComplete(req.body)) {
@@ -533,6 +521,7 @@ app.put('/container/complete', function(req, res){
 		});
 	} else res.status(401).send({success: false, error: 'Unauthorized. Please use provided button to complete your Mission.'});
 });
+
 
 // Define Routing for Container Flush
 app.delete('/container/:docker_hash/end', function(req, res){

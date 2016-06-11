@@ -28,8 +28,6 @@ echo "</script>";
 	$("#complete_level").click(function(){
 	    if(typeof srv_ip !== "undefined"){
 	        $.ajax({
-		        //url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
-		        //type: 'GET',
 		        url: 'http://' + srv_ip + srv_port + '/container/complete',
 		        type: 'PUT',
 		        contentType: 'application/json',
