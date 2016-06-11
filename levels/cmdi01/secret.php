@@ -31,7 +31,7 @@ echo "</script>";
 		        //url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/complete/secret/' + dc_secret,
 		        //type: 'GET',
 		        url: 'http://' + srv_ip + srv_port + '/container/complete',
-		        type: 'POST',
+		        type: 'PUT',
 		        contentType: "application/json",
 		        dataType: "json",
                 data: {"docker_hash": getCookie('dockerHash'), "dc_secret": dc_secret}

@@ -413,7 +413,7 @@ app.listen(config.srv_port, config.listen_ip, function(){
  */
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
 
     next();
@@ -512,7 +512,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 });
 
 app.put('/container/complete', function(req, res){
-	console.log("POST /container/create called");
+	console.log("PUT /container/create called");
 	if (isRequestBodyValidToComplete(req.body)) {
 		WorkshopModule.findContainerByHash(req.body.docker_hash, function (err, citem) {
 			if (citem && citem.secret == req.body.dc_secret) {
