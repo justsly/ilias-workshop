@@ -512,6 +512,7 @@ app.get('/container/:docker_hash/complete/secret/:dc_secret', function(req, res)
 });
 
 app.put('/container/complete', function(req, res){
+	console.log("PUT /container/create called");
 	if (isRequestBodyValidToComplete(req.body)) {
 		WorkshopModule.findContainerByHash(req.body.docker_hash, function (err, citem) {
 			if (citem && citem.secret == req.body.dc_secret) {
