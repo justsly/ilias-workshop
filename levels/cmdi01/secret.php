@@ -34,7 +34,7 @@ echo "</script>";
 		        type: 'PUT',
 		        contentType: 'application/json',
 		        dataType: 'json',
-                data: {"docker_hash": getCookie('dockerHash'), "dc_secret": dc_secret},
+                data: JSON.stringify({"docker_hash": getCookie('dockerHash'), "dc_secret": dc_secret}),
 		        success: function(result) {
 			        console.log(result);
 			        $.ajax({
