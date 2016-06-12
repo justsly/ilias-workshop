@@ -1,5 +1,11 @@
 //Workshop Module to keep functions safe
 
+/**
+ * WorkshopModule, main Application Object
+ *
+ * Encapsulates functions to create, prepare and remove docker container. In addition it
+ * provides functionality for secure and stable communication from and between ILIAS
+ */
 var WorkshopModule = (function () {
 
 	//Define child process to handle the Docker environment
@@ -14,8 +20,8 @@ var WorkshopModule = (function () {
 		/**
 		 * constructor for Level
 		 *
-		 * @param lkey
-		 * @param lvalue
+		 * @param lkey String - key to level
+		 * @param lvalue String - value of the level
 		 * @constructor
 		 */
 		Level : function (lkey, lvalue) {
@@ -27,19 +33,18 @@ var WorkshopModule = (function () {
 		/**
 		 * adds a new level
 		 *
-		 * @param litem
+		 * @param litem Object - WorkshopModule.Level
 		 */
 		addNewLevel : function (litem){
 			_level_list.push(litem);
 		},
 
-
 		/**
 		 * returns the level by a given id or null
 		 *
-		 * @param lkey
-		 * @param cb
-		 * @returns {*}
+		 * @param lkey String - key to level
+		 * @param cb Function - callback
+		 * @returns WorkshopModule.Level|null
 		 */
 		getLevelById : function (lkey, cb) {
 			for (var i = 0; i < _level_list.length; i++) {
@@ -55,16 +60,16 @@ var WorkshopModule = (function () {
         /**
          * constructor for DockerContainer object
          *
-         * @param docker_h
-         * @param docker_p
-         * @param source_id
-         * @param service_url
-         * @param return_url
-         * @param return_msg
-         * @param consumer_key
-         * @param uid
-         * @param lid
-         * @param secret
+         * @param docker_h String - docker hash
+         * @param docker_p String - docker port
+         * @param source_id Int - ID of the ILIAS Source
+         * @param service_url String - URL to send results back to ILIAS
+         * @param return_url String - URL to Return to ILIAS
+         * @param return_msg String - Message to show to user if mission succesfull solved
+         * @param consumer_key String - OAuth consumer key
+         * @param uid String - pseudonym user id
+         * @param lid String - Level id
+         * @param secret String - generate secret
          * @constructor
          */
 		DockerContainer : function (docker_h, docker_p, source_id, service_url, return_url, return_msg, consumer_key, uid, lid, secret) {
@@ -84,8 +89,8 @@ var WorkshopModule = (function () {
 		/**
 		 * Push new DockerContainer object to list
 		 *
-		 * @param dc - docker container
-		 * @param cb
+		 * @param dc Object - docker container
+		 * @param cb Function - callback
 		 * @returns {*}
 		 */
 		addNewContainer : function (dc, cb) {
@@ -97,7 +102,7 @@ var WorkshopModule = (function () {
 		/**
 		 * removes the container by a given id, if matches
 		 *
-		 * @param docker_hash
+		 * @param docker_hash String - docker hash
 		 * @returns {boolean}
 		 */
 		removeContainerByHash : function (docker_hash) {
@@ -115,8 +120,8 @@ var WorkshopModule = (function () {
 		/**
 		 * Returns DockerContainer object from list if matches given hash
 		 *
-		 * @param docker_hash
-		 * @param cb
+		 * @param docker_hash String - docker hash
+		 * @param cb Function - callback
 		 * @returns {*}
 		 */
 		findContainerByHash : function (docker_hash, cb) {
@@ -133,9 +138,9 @@ var WorkshopModule = (function () {
 		/**
 		 * Returns DockerContainer object from list if matches given uid and lid
 		 *
-		 * @param uid - userid
-		 * @param lid - levelid
-		 * @param cb
+		 * @param uid String - pseudonym user id
+		 * @param lid String - level id
+		 * @param cb Function - callback
 		 * @returns {*}
 		 */
 		findContainerByUid : function (uid, lid, cb) {
@@ -155,8 +160,8 @@ var WorkshopModule = (function () {
 		/**
 		 * Create DockerContainer and redirect user to this instance
 		 *
-		 * @param dockSetup
-         * @param cb
+		 * @param dockSetup Object - Object to setup a docker container
+         * @param cb Function - callback
          */
 		createDockerContainer : function (dockSetup, cb) {
 			console.log("create Container with key: " + dockSetup.oauth_consumer_key);
@@ -207,7 +212,7 @@ var WorkshopModule = (function () {
 		/**
 		 * sets a timeout for the container and removes it if the timeout exceeds
 		 *
-		 * @param docker_hash
+		 * @param docker_hash String - docker hash
 		 * @param ms - milliseconds
 		 */
 		setContainerTimeout : function(docker_hash, ms) {
@@ -222,7 +227,7 @@ var WorkshopModule = (function () {
 		/**
 		 * destroys a container
 		 *
-		 * @param docker_hash
+		 * @param docker_hash String - docker hash
 		 */
 		destroyContainer : function (docker_hash) {
 			console.warn('destroying container with provided hash ' + docker_hash);
@@ -237,9 +242,9 @@ var WorkshopModule = (function () {
 		/**
 		 * checks if a given userid and  levelid matches a container
 		 *
-		 * @param uid - userid
-		 * @param lid - levelid
-		 * @param cb
+		 * @param uid String - pseudonym of user id
+		 * @param lid String - level id
+		 * @param cb Function - callback
 		 */
 		checkExistingContainer : function (uid, lid, cb) {
 			return WorkshopModule.findContainerByUid(uid, lid, function(err, citem) {
@@ -255,11 +260,12 @@ var WorkshopModule = (function () {
 		/**
 		 * creates Secret for DockSetup
 		 *
-		 * @returns {*}
+		 * @returns md5-hash
          */
 		createSecret : function(){
 			var current_date = (new Date()).valueOf().toString();
 			var random = Math.random().toString();
+			// use md5 because its fast and no real security/collision safety is needed
 			return crypto.createHash('md5').update(current_date + random).digest('hex');
 		},
 
@@ -267,9 +273,9 @@ var WorkshopModule = (function () {
 		/**
 		 * builds data for the redirect page, so the user has some feedback while waiting time.
 		 *
-		 * @param delay_seconds
-		 * @param url
-		 * @param cb
+		 * @param delay_seconds Int - delay in seconds before user gets redirected
+		 * @param url String - url of container resource to redirect user to
+		 * @param cb Function - callback
          * @returns {string}
          */
 		buildRedirectPage: function(delay_seconds, url, cb){
@@ -304,9 +310,9 @@ var WorkshopModule = (function () {
 		/**
 		 * redirects the user to a existing container after a specified delay of seconds
 		 *
-		 * @param docker_hash
-		 * @param res
-         * @param delay_seconds
+		 * @param docker_hash String - docker hash
+		 * @param res Object - HTTP Response Object
+         * @param delay_seconds - delay in seconds to redirect to container
          */
 		redirectToPort : function (docker_hash, res, delay_seconds) {
 			WorkshopModule.findContainerByHash(docker_hash, function(err, citem) {
@@ -333,10 +339,10 @@ var WorkshopModule = (function () {
 		/**
 		 * sends the HMAC-SHA1 signed solution to ilias
 		 *
-		 * @param service_url
-		 * @param source_id
-		 * @param consumer_key
-		 * @param cb
+		 * @param service_url String - URL to send results back to ILIAS
+		 * @param source_id Int - Source ID of ILIAS
+		 * @param consumer_key String - OAuth defiend consumer key
+		 * @param cb Function - callback
 		 */
 		sendSolutionToILIAS : function (service_url, source_id, consumer_key, cb) {
 			console.log("send to ILIAS with key: " +consumer_key);
@@ -407,9 +413,9 @@ app.listen(config.srv_port, config.listen_ip, function(){
 
 /**
  * function to define CORS headers for use in middleware
- * @param req
- * @param res
- * @param next
+ * @param req NodeJS Express Request Object
+ * @param res NodeJS Express Response Object
+ * @param next Next Function Callback
  */
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
