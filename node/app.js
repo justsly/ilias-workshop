@@ -513,8 +513,8 @@ app.put('/container/complete', function(req, res){
 			if (citem && citem.secret == req.body.dc_secret) {
 				WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function (err, result) {
 					if (result) {
-						res.status(200).send({success: true, message: 'Mission solved.'});
 						citem.solved = true;
+						res.status(200).send({success: true, message: 'Mission solved.'});
 						//WorkshopModule.removeSecret(req.params.dc_secret);
 					} else {
 						res.status(500).send({
