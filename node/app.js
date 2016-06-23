@@ -83,6 +83,7 @@ var WorkshopModule = (function () {
 			this.uid = uid;
 			this.lid = lid;
 			this.secret = secret;
+			this.solved = false;
 		},
 
 
@@ -534,7 +535,9 @@ app.delete('/container/:docker_hash/end', function(req, res){
 	WorkshopModule.findContainerByHash(req.params.docker_hash, function(err, citem) {
 		if (citem) {
 			WorkshopModule.destroyContainer(req.params.docker_hash);
-			res.status(200).send({success: true, return_url: citem.return_url, return_msg: citem.return_msg});
+			if(citem.solved) send_msg = return_msg;
+			else send_msg = "Container vorzeitig beendet.";
+			res.status(200).send({success: true, return_url: citem.return_url, return_msg: send_msg});
 		} else {
 			res.status(404).send({success: false, error: 'container not found!'});
 		}
