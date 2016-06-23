@@ -1,5 +1,7 @@
 <?php
 include("./dbconnect.php");
+include('./config.php');
+
 if(isset($_GET['search'])) $search=$_GET['search'];
 $db = new mysqli($servername,$dbuser,$dbpassword,'sqli');
 if($db->connect_errno > 0){
@@ -38,12 +40,19 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
     <meta name="description" content="">
     <meta name="author" content="BB">
     <link href="css/style.css" rel="stylesheet">
+    <?php
+        echo "<script>";
+        echo "var srv_ip='".$srv_ip."';";
+        echo "var srv_port='".$srv_port."';";
+        echo "</script>";
+    ?>
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
 	<div class="container">
 	  <span class="brand"><a href="/">Web Security Workshop</a></span>
+	  <button class="btn" style="float:right;" id="quit_work">Bearbeitung unterbrechen</button>
 	</div>
       </div>
     </div>
@@ -89,5 +98,26 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
             if(isset($db)) $db->close();
         ?>
     </div>
+
+
+    <script src="jquery/jquery-1.12.1.min.js"></script>
+    <script>
+    	$("#quit_work").click(function(){
+    	    $.ajax({
+               	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
+               	type: 'DELETE',
+               	success: function(result) {
+                    if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
+                    else {
+                        alert(result.return_msg + '\nDer Container wird nun geschlossen.');
+                        window.close();
+                    }
+                },
+                error: function(){
+                    alert("Error Occured! Please Try again.");
+                }
+            });
+    	});
+    </script>
   </body>
 </html>
