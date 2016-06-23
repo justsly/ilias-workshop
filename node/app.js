@@ -511,6 +511,7 @@ app.put('/container/complete', function(req, res){
 	if (isRequestBodyValidToComplete(req.body)) {
 		WorkshopModule.findContainerByHash(req.body.docker_hash, function (err, citem) {
 			if (citem && citem.secret == req.body.dc_secret) {
+				citem.solved = true;
 				WorkshopModule.sendSolutionToILIAS(citem.service_url, citem.source_id, citem.consumer_key, function (err, result) {
 					if (result) {
 						res.status(200).send({success: true, message: 'Mission solved.'});
