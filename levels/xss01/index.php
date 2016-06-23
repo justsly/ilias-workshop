@@ -103,21 +103,33 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
     <script src="jquery/jquery-1.12.1.min.js"></script>
     <script>
     	$("#quit_work").click(function(){
-    	    $.ajax({
-               	url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
-               	type: 'DELETE',
-               	success: function(result) {
-                    if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
-                    else {
-                        alert(result.return_msg + '\nDer Container wird nun geschlossen.');
-                        window.close();
+    	    if(confirm("Soll die Übung wirklich vorzeitig beendet werden?"){
+    	        $.ajax({
+               	    url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
+               	    type: 'DELETE',
+               	    success: function(result) {
+                        if(result.return_url) window.location = result.return_url + "&lti_msg=" + result.return_msg;
+                        else {
+                            alert(result.return_msg + '\nDer Container wird nun geschlossen.');
+                            window.close();
+                        }
+                    },
+                    error: function(){
+                        alert("Error Occured! Please Try again.");
                     }
-                },
-                error: function(){
-                    alert("Error Occured! Please Try again.");
-                }
-            });
+                });
+            }
     	});
+    	function getCookie(cname) {
+            		var name = cname + "=";
+            		var ca = document.cookie.split(';');
+            		for(var i=0; i<ca.length; i++) {
+                		var c = ca[i];
+                		while (c.charAt(0)==' ') c = c.substring(1);
+                		if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            		}
+            		return "";
+        }
     </script>
   </body>
 </html>
