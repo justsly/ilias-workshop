@@ -103,7 +103,7 @@ $suchmuster = '/.*<script[^>]*?>alert\([\s\S]+?\)[;]{0,1}<\/script>.*/';
     <script src="jquery/jquery-1.12.1.min.js"></script>
     <script>
     	$("#quit_work").click(function(){
-    	    if(confirm("Soll die Übung wirklich vorzeitig beendet werden?"){
+    	    if(confirm("Soll die Übung wirklich vorzeitig beendet werden?")){
     	        $.ajax({
                	    url: 'http://' + srv_ip + srv_port + '/container/' + getCookie('dockerHash') + '/end/',
                	    type: 'DELETE',
