@@ -1,12 +1,9 @@
 //Config File for app.js
 var config = {};
 
-//WSDL URL
-config.wsdl_url = "http://localhost/ilias/webservice/soap/server.php?wsdl";
-
 // Define Server IP and Port
 config.listen_ip = '0.0.0.0';
-config.redirect_ip = '81.7.10.250';
+config.redirect_ip = '127.0.0.1';
 config.redirect_port = 80;
 config.redirect_protocol = 'http';
 config.srv_port = 8080;
@@ -18,7 +15,7 @@ config.client_id = "ilias";
 config.inDebug = true;
 
 //Define OAuth Credentials
-config.consumer_secret = 'Xospnzq6v2Uror';
+config.consumer_secret = 'XXXXXXXXXXX';
 
 // default container lifetime in milliseconds
 config.container_lifetime = (60 * 60 * 1000);
