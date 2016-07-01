@@ -20,7 +20,7 @@
         </form>
         </div>
         <td align="middle"><input id="nextLevel" class="btn btn-default" value = "Nächste Aufgabe" onClick="location.href='{NEXT_LEVEL}'" style="display:none" /></td>
-        <td align="right"><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='https://ilias.slycurity.de/goto.php?target=root_1&client_id=ilias'" /></td>
+        <td align="right"><input class="btn btn-default" value = "Zurück zur Übersicht" onClick="location.href='/goto.php?target=root_1&client_id=ilias'" /></td>
         </tr>
         </table>
         <script language="javascript">
